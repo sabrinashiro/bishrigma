@@ -62,6 +62,7 @@ FIELDS_AD = [
     AdsInsights.Field.video_thruplay_watched_actions,   # hook rate
     AdsInsights.Field.video_30_sec_watched_actions,     # hold rate (30s)
     AdsInsights.Field.outbound_clicks_ctr,              # CTR outbound (Meta calcula)
+    AdsInsights.Field.created_time,                     # data de criação do anúncio
 ]
 
 PARAMS_AD = {
@@ -201,8 +202,9 @@ def fetch_ad_insights(date_start: str, date_stop: str) -> list[dict]:
             "campaign_id":   r.get("campaign_id"),
             "campaign_name": r.get("campaign_name"),
             "account_id":    r.get("account_id"),
-            "date_start":    r["date_start"],
-            "date_stop":     r["date_stop"],
+            "date_start":      r["date_start"],
+            "date_stop":       r["date_stop"],
+            "ad_created_time": r.get("created_time", "")[:10] if r.get("created_time") else None,
             **metrics,
         })
 
