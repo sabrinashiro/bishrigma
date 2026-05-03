@@ -1,0 +1,46 @@
+# .github/workflows/meta_etl.yml
+# ============================================================
+# Roda o ETL todo dia às 06:00 UTC (03:00 Brasília)
+# Também pode ser disparado manualmente pelo GitHub Actions
+# ============================================================
+
+name: Meta Ads ETL
+
+on:
+  schedule:
+    - cron: '0 6 * * *'    # diário 06h UTC = 03h Brasília
+  workflow_dispatch:        # disparo manual
+    inputs:
+      days_back:
+        description: 'Quantos dias buscar (padrão: 1)'
+        required: false
+        default: '1'
+
+jobs:
+  etl:
+    name: Fetch & Load Meta Ads
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install facebook-business supabase python-dotenv
+
+      - name: Run ETL
+        run: python meta_etl.py ${{ github.event.inputs.days_back || '1' }}
+        env:
+          META_ACCESS_TOKEN:    ${{ secrets.META_ACCESS_TOKEN }}
+          META_AD_ACCOUNT_ID:   ${{ secrets.META_AD_ACCOUNT_ID }}
+          SUPABASE_URL:         ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
