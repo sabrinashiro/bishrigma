@@ -128,6 +128,19 @@ def paginate(cursor) -> list:
 # Extração e transformação — anúncios
 # ─────────────────────────────────────────────────────────────
 
+TEAM_MEMBERS = ["Paulo", "Sabrina", "Viviane", "Jorge", "Diulia", "Julia", "César", "Cesar", "Anderson"]
+
+def extract_creator(ad_name: str) -> str:
+    """Extrai o nome do criador baseado na nomenclatura do anúncio."""
+    if not ad_name:
+        return "Sem identificação"
+    ad_upper = ad_name.upper()
+    for name in TEAM_MEMBERS:
+        if name.upper() in ad_upper:
+            return "César" if name in ("Cesar", "César") else name
+    return "Sem identificação"
+
+
 def calculate_metrics(row: dict) -> dict:
     """Transforma uma linha bruta da API nas métricas finais."""
 
@@ -174,6 +187,9 @@ def calculate_metrics(row: dict) -> dict:
 
         # Direto da API
         "outbound_ctr":  outbound_ctr,
+
+        # Criador extraído da nomenclatura
+        "creator": extract_creator(row.get("ad_name", "")),
     }
 
 
