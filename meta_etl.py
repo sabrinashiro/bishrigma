@@ -59,8 +59,8 @@ FIELDS_AD = [
     AdsInsights.Field.clicks,
     AdsInsights.Field.actions,                          # compras
     AdsInsights.Field.action_values,                    # receita
-    AdsInsights.Field.video_thruplay_watched_actions,   # hook rate
-    AdsInsights.Field.video_30_sec_watched_actions,     # hold rate (30s)
+    AdsInsights.Field.video_thruplay_watched_actions,   # thruplay (hold rate)
+    AdsInsights.Field.video_30_sec_watched_actions,     # 30s watched (não usado)
     AdsInsights.Field.outbound_clicks_ctr,              # CTR outbound (Meta calcula)
     AdsInsights.Field.created_time,                     # data de criação do anúncio
 ]
@@ -128,17 +128,31 @@ def paginate(cursor) -> list:
 # Extração e transformação — anúncios
 # ─────────────────────────────────────────────────────────────
 
-TEAM_MEMBERS = ["Paulo", "Sabrina", "Viviane", "Jorge", "Diulia", "Julia", "César", "Cesar", "Anderson"]
+TEAM_MEMBERS = ["Paulo", "Sabrina", "Viviane", "Vivi", "Jorge", "Diulia", "Julia", "César", "Cesar", "Anderson"]
+TEAM_NORMALIZED = {
+    "Paulo": "Paulo", "Sabrina": "Sabrina", "Viviane": "Viviane", "Vivi": "Viviane",
+    "Jorge": "Jorge", "Diulia": "Diulia", "Julia": "Julia",
+    "César": "César", "Cesar": "César", "Anderson": "Anderson"
+}
 
-def extract_creator(ad_name: str) -> str:
-    """Extrai o nome do criador baseado na nomenclatura do anúncio."""
-    if not ad_name:
-        return "Sem identificação"
-    ad_upper = ad_name.upper()
-    for name in TEAM_MEMBERS:
-        if name.upper() in ad_upper:
-            return "César" if name in ("Cesar", "César") else name
-    return "Sem identificação"
+def extract_creators(name: str) -> tuple:
+    """Extrai até 2 criadores do adset_name."""
+    if not name:
+        return None, None
+    name_upper = name.upper()
+    found = []
+    seen = set()
+    for member in TEAM_MEMBERS:
+        if member.upper() in name_upper:
+            normalized = TEAM_NORMALIZED.get(member, member)
+            if normalized not in seen:
+                seen.add(normalized)
+                found.append(normalized)
+        if len(found) == 2:
+            break
+    creator_1 = found[0] if len(found) > 0 else None
+    creator_2 = found[1] if len(found) > 1 else None
+    return creator_1, creator_2
 
 
 def calculate_metrics(row: dict) -> dict:
@@ -150,14 +164,12 @@ def calculate_metrics(row: dict) -> dict:
     purchases    = int(extract_action(row.get("actions"), "purchase"))
     purchase_val = float(extract_action(row.get("action_values"), "purchase"))
 
-    # ThruPlay (hook rate)
+    # video_view (3s) — vem dentro de "actions" com action_type "video_view"
+    video_view_3s = int(extract_action(row.get("actions"), "video_view"))
+
+    # ThruPlay — vem no campo dedicado video_thruplay_watched_actions
     thruplays = int(
         extract_action(row.get("video_thruplay_watched_actions"), "video_view")
-    )
-
-    # 30s watched (hold rate)
-    video_views = int(
-        extract_action(row.get("video_30_sec_watched_actions"), "video_view")
     )
 
     # outbound_ctr: Meta entrega como lista [{"action_type": "...", "value": "0.52"}]
@@ -175,21 +187,25 @@ def calculate_metrics(row: dict) -> dict:
         "purchases":                         purchases,
         "purchase_value":                    purchase_val,
         "video_thruplay_watched_actions":    thruplays,
-        "video_watched_actions":             video_views,
+        "video_watched_actions":             video_view_3s,   # video_view 3s da Meta
+        "video_view":                        video_view_3s,   # campo explícito
 
         # Calculadas
+        # hook = video_view_3s / impressions
+        # hold = thruplay / impressions
         "cvr":           safe_div(clicks, impressions) * 100 if impressions else None,
         "cpa":           safe_div(spend, purchases),
         "roas":          safe_div(purchase_val, spend),
-        "hook_rate":     safe_div(thruplays, impressions) * 100 if impressions else None,
-        "hold_rate":     safe_div(video_views, impressions) * 100 if impressions else None,
-        "cost_per_hook": round(spend / thruplays, 2) if thruplays > 0 else None,
+        "hook_rate":     safe_div(video_view_3s, impressions) * 100 if impressions else None,
+        "hold_rate":     safe_div(thruplays, impressions) * 100 if impressions else None,
+        "cost_per_hook": round(spend / video_view_3s, 2) if video_view_3s > 0 else None,
 
         # Direto da API
         "outbound_ctr":  outbound_ctr,
 
-        # Criador extraído da nomenclatura
-        "creator": extract_creator(row.get("ad_name", "")),
+        # Criadores extraídos da nomenclatura
+        "creator_1": extract_creators(row.get("adset_name", ""))[0],
+        "creator_2": extract_creators(row.get("adset_name", ""))[1],
     }
 
 
