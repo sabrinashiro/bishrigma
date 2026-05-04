@@ -236,29 +236,27 @@
         </div>
       </div>
 
+      <div style="margin-bottom:16px">
+        <div class="section-title" style="margin-bottom:12px">Métrica por pessoa</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap" id="pessoaMetricBtns">
+          <button class="filter-btn active" data-pmetric="spend">Investimento</button>
+          <button class="filter-btn" data-pmetric="roas">ROAS</button>
+          <button class="filter-btn" data-pmetric="hook">Hook rate</button>
+          <button class="filter-btn" data-pmetric="hold">Hold rate</button>
+          <button class="filter-btn" data-pmetric="cpa">CPA</button>
+        </div>
+      </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px">
-          <div class="section-title" style="margin-bottom:16px">Investimento por copy</div>
-          <div style="position:relative;height:200px">
-            <canvas id="chartCopys" role="img" aria-label="Investimento por copy"></canvas>
+          <div class="section-title" style="margin-bottom:16px">Copys — progressão</div>
+          <div style="position:relative;height:240px">
+            <canvas id="chartCopys" role="img" aria-label="Progressão copys"></canvas>
           </div>
         </div>
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px">
-          <div class="section-title" style="margin-bottom:16px">Investimento por editora</div>
-          <div style="position:relative;height:200px">
-            <canvas id="chartEditoras" role="img" aria-label="Investimento por editora"></canvas>
-          </div>
-        </div>
-        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px">
-          <div class="section-title" style="margin-bottom:16px">ROAS por copy</div>
-          <div style="position:relative;height:200px">
-            <canvas id="chartCopysRoas" role="img" aria-label="ROAS por copy"></canvas>
-          </div>
-        </div>
-        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px">
-          <div class="section-title" style="margin-bottom:16px">ROAS por editora</div>
-          <div style="position:relative;height:200px">
-            <canvas id="chartEditorasRoas" role="img" aria-label="ROAS por editora"></canvas>
+          <div class="section-title" style="margin-bottom:16px">Editoras — progressão</div>
+          <div style="position:relative;height:240px">
+            <canvas id="chartEditoras" role="img" aria-label="Progressão editoras"></canvas>
           </div>
         </div>
       </div>
@@ -608,7 +606,6 @@ if (!SB_URL || !SB_KEY) openConfig(); else loadAll();
 <script>
 // ── Gráficos ──────────────────────────────────────────────────────────────────
 let chartTemporal = null, chartCopys = null, chartEditoras = null;
-let chartCopysRoas = null, chartEditorasRoas = null;
 let currentMetric = 'spend';
 let temporalData = [];
 let pessoasData = {};
@@ -697,24 +694,77 @@ function buildBarChart(canvasId, labels, data, colors, existingChart) {
   return existingChart;
 }
 
-function buildPessoasCharts(data) {
-  const TEAM = [...COPYS, ...EDITORAS];
+let currentPMetric = 'spend';
+let pessoasTemporalData = [];
 
-  // Investimento por pessoa
-  const spendCopys  = COPYS.map(n => +(data[n]?.spend || 0).toFixed(2));
-  const spendEdit   = EDITORAS.map(n => +(data[n]?.spend || 0).toFixed(2));
-  chartCopys    = buildBarChart('chartCopys',    COPYS,    spendCopys,  ['#d4f044','#d4f044'], chartCopys);
-  chartEditoras = buildBarChart('chartEditoras', EDITORAS, spendEdit,   ['#4dffb4','#4dffb4'], chartEditoras);
+const PESSOA_COLORS = ['#d4f044','#5ca8ff','#4dffb4','#f0a050','#c084fc','#ff5c5c'];
 
-  // ROAS por pessoa
-  const roasCopys = COPYS.map(n => {
-    const d = data[n]; return d?.spend ? +(d.pv/d.spend).toFixed(2) : 0;
+const PMETRIC_LABELS = {
+  spend: 'Investimento (R$)', roas: 'ROAS', cpa: 'CPA (R$)',
+  hook: 'Hook rate (%)', hold: 'Hold rate (%)'
+};
+
+function getPMetricValue(d, metric) {
+  if (metric === 'spend') return d.spend;
+  if (metric === 'roas')  return d.spend ? d.pv/d.spend : 0;
+  if (metric === 'cpa')   return d.pur ? d.spend/d.pur : 0;
+  if (metric === 'hook')  return d.imp ? d.vw/d.imp*100 : 0;
+  if (metric === 'hold')  return d.imp ? d.thru/d.imp*100 : 0;
+  return 0;
+}
+
+function buildPessoaLineChart(canvasId, labels, datasets, existingChart) {
+  existingChart = destroyChart(existingChart);
+  existingChart = new Chart(document.getElementById(canvasId), {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: true,
+          labels: { color: '#888', font: { family: 'DM Mono', size: 10 }, boxWidth: 12, padding: 12 }
+        }
+      },
+      scales: {
+        x: { ticks: { color: '#666', font: { family: 'DM Mono', size: 10 }, maxTicksLimit: 8 }, grid: { color: 'rgba(255,255,255,0.05)' } },
+        y: { ticks: { color: '#666', font: { family: 'DM Mono', size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } }
+      }
+    }
   });
-  const roasEdit = EDITORAS.map(n => {
-    const d = data[n]; return d?.spend ? +(d.pv/d.spend).toFixed(2) : 0;
-  });
-  chartCopysRoas    = buildBarChart('chartCopysRoas',    COPYS,    roasCopys, ['#5ca8ff','#5ca8ff'], chartCopysRoas);
-  chartEditorasRoas = buildBarChart('chartEditorasRoas', EDITORAS, roasEdit,  ['#f0a050','#f0a050'], chartEditorasRoas);
+  return existingChart;
+}
+
+function buildPessoasCharts(metric) {
+  if (!pessoasTemporalData.length) return;
+
+  // Agrupa dados por dia por pessoa
+  const allDates = [...new Set(pessoasTemporalData.map(r => r.date_start).filter(d => d))].sort();
+  const labels = allDates.map(d => d ? d.split('-').reverse().join('/') : '');
+
+  function datasetsFor(names, colors) {
+    return names.map((name, i) => {
+      const data = allDates.map(date => {
+        const dayRows = pessoasTemporalData.filter(r => r.date_start === date && (r.creator_1 === name || r.creator_2 === name));
+        const agg = { spend:0, pv:0, imp:0, pur:0, vw:0, thru:0 };
+        dayRows.forEach(r => {
+          agg.spend += +r.spend||0; agg.pv += +r.purchase_value||0;
+          agg.imp += +r.impressions||0; agg.pur += +r.purchases||0;
+          agg.vw += +r.video_view||0; agg.thru += +r.video_thruplay_watched_actions||0;
+        });
+        return +getPMetricValue(agg, metric).toFixed(2);
+      });
+      return {
+        label: name, data,
+        borderColor: colors[i], backgroundColor: colors[i]+'20',
+        borderWidth: 2, pointRadius: allDates.length > 30 ? 0 : 3,
+        pointBackgroundColor: colors[i], tension: 0.3, fill: false
+      };
+    });
+  }
+
+  chartCopys    = buildPessoaLineChart('chartCopys',    labels, datasetsFor(COPYS,    PESSOA_COLORS), chartCopys);
+  chartEditoras = buildPessoaLineChart('chartEditoras', labels, datasetsFor(EDITORAS, PESSOA_COLORS.slice(2)), chartEditoras);
 }
 
 async function loadGraficos() {
@@ -725,7 +775,7 @@ async function loadGraficos() {
         'date_start,spend,purchase_value,impressions,clicks,purchases,video_view,video_thruplay_watched_actions,outbound_ctr_weighted,impressions_for_ctr'
       ),
       sbFetch('meta_ads_insights',
-        'creator_1,creator_2,spend,purchase_value,impressions,purchases,video_view,video_thruplay_watched_actions'
+        'date_start,creator_1,creator_2,spend,purchase_value,impressions,purchases,video_view,video_thruplay_watched_actions'
       )
     ]);
     if (!rows) return;
@@ -733,29 +783,25 @@ async function loadGraficos() {
     // Ordena por data
     temporalData = rows.sort((a,b) => a.date_start.localeCompare(b.date_start));
 
-    // Agrega por pessoa
-    const TEAM = [...COPYS, ...EDITORAS];
-    const pd = {};
-    TEAM.forEach(n => pd[n] = { spend:0, pv:0, imp:0, pur:0, vw:0, thru:0 });
-    (pessoasRows || []).forEach(r => {
-      [r.creator_1, r.creator_2].forEach(name => {
-        if (!name || !pd[name]) return;
-        pd[name].spend += +r.spend || 0;
-        pd[name].pv    += +r.purchase_value || 0;
-        pd[name].imp   += +r.impressions || 0;
-        pd[name].pur   += +r.purchases || 0;
-        pd[name].vw    += +r.video_view || 0;
-        pd[name].thru  += +r.video_thruplay_watched_actions || 0;
-      });
-    });
-    pessoasData = pd;
+    // Salva dados por pessoa/dia para gráficos de progressão
+    pessoasTemporalData = pessoasRows || [];
 
     buildTemporal(currentMetric);
-    buildPessoasCharts(pessoasData);
+    buildPessoasCharts(currentPMetric);
 
     hide('load-graficos'); show('content-graficos');
   } catch(e) { showErr(e.message); hide('load-graficos'); }
 }
+
+// Botões de métrica por pessoa
+document.getElementById('pessoaMetricBtns')?.addEventListener('click', e => {
+  const btn = e.target.closest('[data-pmetric]');
+  if (!btn) return;
+  document.querySelectorAll('#pessoaMetricBtns .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentPMetric = btn.dataset.pmetric;
+  if (pessoasTemporalData.length) buildPessoasCharts(currentPMetric);
+});
 
 // Botões de métrica
 document.getElementById('metricBtns')?.addEventListener('click', e => {
