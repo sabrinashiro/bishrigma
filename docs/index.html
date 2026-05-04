@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meta Ads — BI</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a; --surface: #111; --surface2: #181818;
+    --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.12);
+    --text: #f0f0f0; --muted: #666; --muted2: #888;
+    --accent: #d4f044; --red: #ff5c5c; --green: #4dffb4; --blue: #5ca8ff;
+    --font: 'DM Sans', sans-serif; --mono: 'DM Mono', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 14px; }
+  header { display: flex; align-items: center; justify-content: space-between; padding: 16px 28px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg); z-index: 100; flex-wrap: wrap; gap: 10px; }
+  .logo-wrap { display: flex; align-items: baseline; gap: 14px; }
+  .logo { font-family: var(--mono); font-size: 13px; color: var(--accent); letter-spacing: 0.08em; }
+  .period-label { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+  .header-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .filter-btn { font-family: var(--mono); font-size: 11px; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--border2); background: transparent; color: var(--muted2); cursor: pointer; transition: all 0.15s; }
+  .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .filter-btn.active { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 500; }
+  .date-inputs { display: none; align-items: center; gap: 6px; }
+  .date-inputs input { font-family: var(--mono); font-size: 11px; padding: 5px 10px; background: var(--surface2); border: 1px solid var(--border2); border-radius: 6px; color: var(--text); }
+  .date-inputs input:focus { outline: none; border-color: var(--accent); }
+  .config-btn { font-family: var(--mono); font-size: 11px; padding: 6px 14px; border-radius: 6px; border: 1px solid var(--border2); background: transparent; color: var(--muted2); cursor: pointer; transition: all 0.15s; }
+  .config-btn:hover { border-color: var(--accent); color: var(--accent); }
+  main { padding: 24px 28px; }
+  .tabs { display: flex; gap: 2px; margin-bottom: 24px; border-bottom: 1px solid var(--border); }
+  .tab { font-size: 13px; padding: 10px 18px; color: var(--muted2); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 500; }
+  .pane { display: none; }
+  .pane.active { display: block; }
+  .cards-big { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 12px; }
+  .cards-small { display: grid; grid-template-columns: repeat(6,1fr); gap: 12px; margin-bottom: 28px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
+  .card .lbl { font-size: 10px; font-family: var(--mono); color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+  .card .val { font-size: 28px; font-weight: 600; line-height: 1; }
+  .card.sm .val { font-size: 20px; }
+  .section-title { font-size: 11px; font-family: var(--mono); color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 14px; }
+  .badge { font-size: 10px; font-family: var(--mono); padding: 3px 10px; border-radius: 999px; font-weight: 500; margin-left: 8px; }
+  .badge.copy { background: rgba(92,168,255,0.12); color: var(--blue); border: 1px solid rgba(92,168,255,0.25); }
+  .badge.editor { background: rgba(77,255,180,0.1); color: var(--green); border: 1px solid rgba(77,255,180,0.2); }
+  .table-wrap { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 28px; }
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { background: var(--surface2); }
+  th { padding: 10px 14px; text-align: left; font-size: 10px; font-family: var(--mono); color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  th.r { text-align: right; }
+  td { padding: 10px 14px; font-size: 12px; border-bottom: 1px solid var(--border); color: var(--text); }
+  td.r { text-align: right; font-family: var(--mono); font-size: 12px; color: var(--muted2); }
+  td.hi { text-align: right; font-family: var(--mono); font-size: 12px; color: var(--accent); font-weight: 500; }
+  tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: var(--surface2); }
+  .search-wrap { position: relative; margin-bottom: 12px; }
+  .search-wrap input { width: 100%; font-family: var(--mono); font-size: 12px; padding: 10px 16px 10px 36px; background: var(--surface); border: 1px solid var(--border2); border-radius: 8px; color: var(--text); }
+  .search-wrap input:focus { outline: none; border-color: var(--accent); }
+  .search-wrap input::placeholder { color: var(--muted); }
+  .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 14px; pointer-events: none; }
+  .loading { display: flex; align-items: center; justify-content: center; padding: 60px; color: var(--muted); font-family: var(--mono); font-size: 12px; gap: 10px; }
+  .spinner { width: 16px; height: 16px; border: 2px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .col-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; align-items: center; }
+  .col-filter { display: flex; align-items: center; gap: 4px; background: var(--surface); border: 1px solid var(--border2); border-radius: 6px; padding: 4px 10px; }
+  .col-filter label { font-family: var(--mono); font-size: 10px; color: var(--muted); text-transform: uppercase; white-space: nowrap; }
+  .col-filter input { font-family: var(--mono); font-size: 11px; width: 70px; background: transparent; border: none; color: var(--text); padding: 2px 4px; }
+  .col-filter input:focus { outline: none; }
+  .col-filter input::placeholder { color: var(--muted); }
+  .filter-sep { color: var(--muted); font-size: 10px; }
+  .clear-btn { font-family: var(--mono); font-size: 10px; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border2); background: transparent; color: var(--muted2); cursor: pointer; }
+  .clear-btn:hover { color: var(--red); border-color: var(--red); }
+  /* Calendário */
+  .date-inputs input[type=date] { color-scheme: dark; }
+  input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.6); cursor: pointer; }
+  .error-box { background: rgba(255,92,92,0.08); border: 1px solid rgba(255,92,92,0.2); border-radius: 8px; padding: 12px 16px; color: var(--red); font-family: var(--mono); font-size: 12px; margin-bottom: 20px; display: none; }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200; display: none; align-items: center; justify-content: center; }
+  .modal { background: var(--surface); border: 1px solid var(--border2); border-radius: 12px; padding: 28px; width: 420px; }
+  .modal h2 { font-size: 13px; font-family: var(--mono); color: var(--accent); margin-bottom: 20px; letter-spacing: 0.06em; }
+  .modal label { display: block; font-size: 11px; font-family: var(--mono); color: var(--muted); margin-bottom: 6px; }
+  .modal input { width: 100%; font-family: var(--mono); font-size: 12px; padding: 9px 12px; background: var(--bg); border: 1px solid var(--border2); border-radius: 6px; color: var(--text); margin-bottom: 16px; }
+  .modal input:focus { outline: none; border-color: var(--accent); }
+  .modal-btns { display: flex; gap: 8px; justify-content: flex-end; }
+  .btn-primary { font-family: var(--mono); font-size: 12px; padding: 8px 20px; background: var(--accent); color: #000; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; }
+  .btn-secondary { font-family: var(--mono); font-size: 12px; padding: 8px 20px; background: transparent; color: var(--muted2); border: 1px solid var(--border2); border-radius: 6px; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-wrap">
+    <span class="logo">META ADS — BI</span>
+    <span class="period-label" id="periodLabel"></span>
+  </div>
+  <div class="header-right">
+    <button class="filter-btn" data-range="today">hoje</button>
+    <button class="filter-btn" data-range="week">7 dias</button>
+    <button class="filter-btn active" data-range="month">30 dias</button>
+    <button class="filter-btn" data-range="custom">personalizado</button>
+    <div class="date-inputs" id="customDates">
+      <input type="date" id="dateFrom" onchange="autoApply()">
+      <span style="color:var(--muted);font-size:11px">→</span>
+      <input type="date" id="dateTo" onchange="autoApply()">
+    </div>
+    <button class="config-btn" onclick="openConfig()">⚙ config</button>
+  </div>
+</header>
+
+<main>
+  <div class="error-box" id="errorBox"></div>
+
+  <div class="tabs">
+    <div class="tab active" data-pane="geral">visão geral</div>
+    <div class="tab" data-pane="pessoas">por pessoa</div>
+    <div class="tab" data-pane="graficos">gráficos</div>
+  </div>
+
+  <!-- VISÃO GERAL -->
+  <div class="pane active" id="pane-geral">
+    <div class="loading" id="load-geral"><div class="spinner"></div>carregando...</div>
+    <div id="content-geral" style="display:none">
+      <div class="cards-big">
+        <div class="card"><div class="lbl">Investimento</div><div class="val" id="v-spend">—</div></div>
+        <div class="card"><div class="lbl">ROAS</div><div class="val" id="v-roas">—</div></div>
+        <div class="card"><div class="lbl">Frequência (conta)</div><div class="val" id="v-freq">—</div></div>
+      </div>
+      <div class="cards-small">
+        <div class="card sm"><div class="lbl">CPA</div><div class="val" id="v-cpa">—</div></div>
+        <div class="card sm"><div class="lbl">CVR</div><div class="val" id="v-cvr">—</div></div>
+        <div class="card sm"><div class="lbl">CTR</div><div class="val" id="v-ctr">—</div></div>
+        <div class="card sm"><div class="lbl">Hook rate</div><div class="val" id="v-hook">—</div></div>
+        <div class="card sm"><div class="lbl">Hold rate</div><div class="val" id="v-hold">—</div></div>
+        <div class="card sm"><div class="lbl">Custo/hook</div><div class="val" id="v-cph">—</div></div>
+      </div>
+
+      <div class="section-title">Todos os anúncios</div>
+      <div class="loading" id="load-ads"><div class="spinner"></div>carregando...</div>
+      <div id="content-ads" style="display:none">
+        <div class="col-filters" id="colFilters">
+          <div class="col-filter">
+            <label>Invest min</label>
+            <input type="number" id="f-spend-min" placeholder="0" oninput="filterAds()">
+          </div>
+          <div class="col-filter">
+            <label>ROAS min</label>
+            <input type="number" id="f-roas-min" placeholder="0" step="0.1" oninput="filterAds()">
+          </div>
+          <div class="col-filter">
+            <label>CPA max</label>
+            <input type="number" id="f-cpa-max" placeholder="∞" oninput="filterAds()">
+          </div>
+          <div class="col-filter">
+            <label>CTR min</label>
+            <input type="number" id="f-ctr-min" placeholder="0" step="0.1" oninput="filterAds()">
+            <span class="filter-sep">%</span>
+          </div>
+          <div class="col-filter">
+            <label>Hook min</label>
+            <input type="number" id="f-hook-min" placeholder="0" step="0.1" oninput="filterAds()">
+            <span class="filter-sep">%</span>
+          </div>
+          <div class="col-filter">
+            <label>Hold min</label>
+            <input type="number" id="f-hold-min" placeholder="0" step="0.1" oninput="filterAds()">
+            <span class="filter-sep">%</span>
+          </div>
+          <button class="clear-btn" onclick="clearFilters()">limpar filtros</button>
+        </div>
+        <div class="search-wrap">
+          <span class="search-icon">⌕</span>
+          <input type="text" id="searchInput" placeholder="pesquisar nome do anúncio ou adset..." oninput="filterAds()">
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Anúncio</th><th>Adset</th><th>Copy</th><th>Editora</th>
+              <th class="r">Investimento</th><th class="r">ROAS</th><th class="r">CPA</th>
+              <th class="r">CTR</th><th class="r">Hook rate</th><th class="r">Hold rate</th><th class="r">Custo/hook</th>
+            </tr></thead>
+            <tbody id="tbody-ads"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- POR PESSOA -->
+  <div class="pane" id="pane-pessoas">
+    <div class="loading" id="load-pessoas"><div class="spinner"></div>carregando...</div>
+    <div id="content-pessoas" style="display:none">
+      <div class="section-title">Copys <span class="badge copy">CTR · Hook rate · CPA · ROAS</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Pessoa</th><th class="r">Investimento</th><th class="r">ROAS</th>
+            <th class="r">CTR</th><th class="r">Hook rate</th><th class="r">CPA</th>
+          </tr></thead>
+          <tbody id="tbody-copys"></tbody>
+        </table>
+      </div>
+      <div class="section-title">Editoras <span class="badge editor">Hold rate · Ratio · ROAS</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Pessoa</th><th class="r">Investimento</th><th class="r">ROAS</th>
+            <th class="r">Hold rate</th><th class="r">Ratio</th>
+          </tr></thead>
+          <tbody id="tbody-editoras"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!-- GRÁFICOS -->
+  <div class="pane" id="pane-graficos">
+    <div class="loading" id="load-graficos"><div class="spinner"></div>carregando...</div>
+    <div id="content-graficos" style="display:none">
+
+      <div style="margin-bottom:20px">
+        <div class="section-title" style="margin-bottom:12px">Métrica do gráfico temporal</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap" id="metricBtns">
+          <button class="filter-btn active" data-metric="spend">Investimento</button>
+          <button class="filter-btn" data-metric="roas">ROAS</button>
+          <button class="filter-btn" data-metric="cpa">CPA</button>
+          <button class="filter-btn" data-metric="hook">Hook rate</button>
+          <button class="filter-btn" data-metric="hold">Hold rate</button>
+          <button class="filter-btn" data-metric="ctr">CTR</button>
+        </div>
+      </div>
+
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:20px">
+        <div class="section-title" style="margin-bottom:16px" id="chart-title">Investimento ao longo do tempo</div>
+        <div style="position:relative;height:280px">
+          <canvas id="chartTemporal" role="img" aria-label="Gráfico de evolução temporal"></canvas>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px">
+          <div class="section-title" style="margin-bottom:16px">Investimento por copy</div>
+          <div style="position:relative;height:200px">
+            <canvas id="chartCopys" role="img" aria-label="Investimento por copy"></canvas>
+          </div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px">
+          <div class="section-title" style="margin-bottom:16px">Investimento por editora</div>
+          <div style="position:relative;height:200px">
+            <canvas id="chartEditoras" role="img" aria-label="Investimento por editora"></canvas>
+          </div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px">
+          <div class="section-title" style="margin-bottom:16px">ROAS por copy</div>
+          <div style="position:relative;height:200px">
+            <canvas id="chartCopysRoas" role="img" aria-label="ROAS por copy"></canvas>
+          </div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px">
+          <div class="section-title" style="margin-bottom:16px">ROAS por editora</div>
+          <div style="position:relative;height:200px">
+            <canvas id="chartEditorasRoas" role="img" aria-label="ROAS por editora"></canvas>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<!-- Config Modal -->
+<div class="modal-overlay" id="configModal" onclick="if(event.target===this)closeConfig()">
+  <div class="modal">
+    <h2>// configuração</h2>
+    <label>SUPABASE URL</label>
+    <input type="text" id="cfgUrl" placeholder="https://xxxx.supabase.co">
+    <label>SUPABASE ANON KEY</label>
+    <input type="text" id="cfgKey" placeholder="eyJhbGci...">
+    <div class="modal-btns">
+      <button class="btn-secondary" onclick="closeConfig()">cancelar</button>
+      <button class="btn-primary" onclick="saveConfig()">salvar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Configuração ──────────────────────────────────────────────────────────────
+const COPYS    = ['Paulo','Diulia'];
+const EDITORAS = ['Julia','Sabrina'];
+let SB_URL = localStorage.getItem('sb_url') || '';
+let SB_KEY = localStorage.getItem('sb_key') || '';
+let FROM = '', TO = '';
+let allAds = [];
+
+// ── Formatação ────────────────────────────────────────────────────────────────
+const brl  = v => v == null ? '—' : 'R$ ' + Number(v).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+const num2 = v => v == null || isNaN(v) ? '—' : Number(v).toFixed(2).replace('.',',');
+const pct2 = v => v == null || isNaN(v) ? '—' : Number(v).toFixed(2).replace('.',',') + '%';
+const fmtd = d => d.split('-').reverse().join('/');
+
+// ── Período ───────────────────────────────────────────────────────────────────
+function getRange(range) {
+  const today = new Date();
+  const fmt = d => d.toISOString().split('T')[0];
+  const to = fmt(today);
+  if (range === 'today')   return { from: to, to };
+  if (range === 'week')    { const d = new Date(today); d.setDate(d.getDate()-6);  return { from: fmt(d), to }; }
+  if (range === 'month')   { const d = new Date(today); d.setDate(d.getDate()-29); return { from: fmt(d), to }; }
+  if (range === 'quarter') { const d = new Date(today); d.setDate(d.getDate()-89); return { from: fmt(d), to }; }
+  return null;
+}
+
+function updatePeriodLabel() {
+  document.getElementById('periodLabel').textContent = FROM === TO ? fmtd(FROM) : fmtd(FROM) + ' → ' + fmtd(TO);
+}
+
+function setRange(range) {
+  document.querySelectorAll('.filter-btn[data-range]').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.filter-btn[data-range="${range}"]`)?.classList.add('active');
+  const customDiv = document.getElementById('customDates');
+  if (range === 'custom') {
+    customDiv.style.display = 'flex';
+  } else {
+    customDiv.style.display = 'none';
+    const r = getRange(range);
+    if (r) { FROM = r.from; TO = r.to; updatePeriodLabel(); loadAll(); }
+  }
+}
+
+function applyCustom() {
+  FROM = document.getElementById('dateFrom').value;
+  TO   = document.getElementById('dateTo').value;
+  if (FROM && TO) { updatePeriodLabel(); loadAll(); }
+}
+
+function autoApply() {
+  const f = document.getElementById('dateFrom').value;
+  const t = document.getElementById('dateTo').value;
+  if (f && t && f <= t) { FROM = f; TO = t; updatePeriodLabel(); loadAll(); }
+}
+
+document.querySelectorAll('.filter-btn[data-range]').forEach(b =>
+  b.addEventListener('click', () => setRange(b.dataset.range))
+);
+document.querySelectorAll('.tab').forEach(t =>
+  t.addEventListener('click', () => switchTab(t.dataset.pane, t))
+);
+
+// ── API ───────────────────────────────────────────────────────────────────────
+async function sbFetch(table, select, extraFilters = '') {
+  if (!SB_URL || !SB_KEY) return null;
+  const url = `${SB_URL}/rest/v1/${table}?select=${encodeURIComponent(select)}&date_start=gte.${FROM}&date_start=lte.${TO}${extraFilters}&limit=100000`;
+  const r = await fetch(url, {
+    headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+
+function showErr(msg) {
+  const el = document.getElementById('errorBox');
+  el.textContent = '⚠ ' + msg;
+  el.style.display = 'block';
+}
+function clearErr() { document.getElementById('errorBox').style.display = 'none'; }
+
+// ── Visão Geral ───────────────────────────────────────────────────────────────
+async function loadGeral() {
+  show('load-geral'); hide('content-geral');
+  try {
+    const [rows, freqRows] = await Promise.all([
+      sbFetch('meta_ads_daily_totals', 'spend,purchase_value,impressions,clicks,purchases,video_view,video_thruplay_watched_actions,outbound_ctr_weighted,impressions_for_ctr'),
+      sbFetch('meta_account_frequency', 'frequency,impressions')
+    ]);
+    if (!rows) return;
+
+    // Acumula brutos
+    let spend=0, pv=0, imp=0, clicks=0, pur=0, vw=0, thru=0, ctr_num=0, ctr_den=0;
+    rows.forEach(r => {
+      spend  += +r.spend  || 0;
+      pv     += +r.purchase_value || 0;
+      imp    += +r.impressions || 0;
+      clicks += +r.clicks || 0;
+      pur    += +r.purchases || 0;
+      vw     += +r.video_view || 0;           // video_view 3s → hook
+      thru   += +r.video_thruplay_watched_actions || 0;  // thruplay → hold
+      ctr_num += +r.outbound_ctr_weighted || 0;
+      ctr_den += +r.impressions_for_ctr || 0;
+    });
+
+    // Frequência conta: média ponderada por impressões
+    let fq_num=0, fq_den=0;
+    (freqRows || []).forEach(r => {
+      if (r.frequency && r.impressions) { fq_num += +r.frequency * +r.impressions; fq_den += +r.impressions; }
+    });
+
+    // Métricas
+    // hook = video_view_3s / impressions
+    // hold = thruplay / impressions
+    const roas = spend ? pv/spend : 0;
+    const cpa  = pur   ? spend/pur : 0;
+    const cvr  = imp   ? clicks/imp*100 : 0;
+    const ctr  = ctr_den ? ctr_num/ctr_den : 0;
+    const hook = imp   ? vw/imp*100 : 0;
+    const hold = imp   ? thru/imp*100 : 0;
+    const cph  = vw    ? spend/vw : 0;   // custo por hook = spend / video_views_3s
+    const freq = fq_den ? fq_num/fq_den : 0;
+
+    set('v-spend', brl(spend));
+    set('v-roas',  num2(roas));
+    set('v-freq',  num2(freq));
+    set('v-cpa',   brl(cpa));
+    set('v-cvr',   pct2(cvr));
+    set('v-ctr',   pct2(ctr));
+    set('v-hook',  pct2(hook));
+    set('v-hold',  pct2(hold));
+    set('v-cph',   brl(cph));
+
+    hide('load-geral'); show('content-geral');
+  } catch(e) { showErr(e.message); hide('load-geral'); }
+}
+
+// ── Anúncios ──────────────────────────────────────────────────────────────────
+async function loadAds() {
+  show('load-ads'); hide('content-ads');
+  try {
+    const rows = await sbFetch('meta_ads_insights',
+      'ad_name,adset_name,creator_1,creator_2,spend,purchase_value,clicks,impressions,purchases,video_view,video_thruplay_watched_actions,outbound_ctr'
+    );
+    if (!rows) return;
+
+    const map = {};
+    rows.forEach(r => {
+      const k = r.ad_name || '(sem nome)';
+      if (!map[k]) map[k] = { name:k, adset:r.adset_name||'—', c1:r.creator_1, c2:r.creator_2, spend:0, pv:0, clicks:0, imp:0, pur:0, vw:0, thru:0, ctr_num:0, ctr_den:0 };
+      const a = map[k];
+      a.spend  += +r.spend || 0;
+      a.pv     += +r.purchase_value || 0;
+      a.clicks += +r.clicks || 0;
+      a.imp    += +r.impressions || 0;
+      a.pur    += +r.purchases || 0;
+      a.vw     += +r.video_watched_actions || 0;
+      a.thru   += +r.video_thruplay_watched_actions || 0;
+      if (r.outbound_ctr && r.impressions) { a.ctr_num += +r.outbound_ctr * +r.impressions; a.ctr_den += +r.impressions; }
+    });
+
+    allAds = Object.values(map).sort((a,b) => b.spend - a.spend);
+    renderAds(allAds);
+    hide('load-ads'); show('content-ads');
+  } catch(e) { showErr(e.message); hide('load-ads'); }
+}
+
+function renderAds(list) {
+  document.getElementById('tbody-ads').innerHTML = list.map(a => {
+    const roas = a.spend ? a.pv/a.spend : 0;
+    const cpa  = a.pur   ? a.spend/a.pur : 0;
+    const ctr  = a.ctr_den ? a.ctr_num/a.ctr_den : 0;
+    const hook = a.imp   ? a.vw/a.imp*100 : 0;
+    const hold = a.imp   ? a.thru/a.imp*100 : 0;
+    const cph  = a.vw    ? a.spend/a.vw : 0;
+    const copy = [a.c1,a.c2].filter(x => x && COPYS.includes(x)).join(', ') || '—';
+    const edit = [a.c1,a.c2].filter(x => x && EDITORAS.includes(x)).join(', ') || '—';
+    return `<tr>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.name}</td>
+      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted2);font-size:11px">${a.adset}</td>
+      <td>${copy}</td><td>${edit}</td>
+      <td class="r">${brl(a.spend)}</td>
+      <td class="hi">${num2(roas)}</td>
+      <td class="r">${brl(cpa)}</td>
+      <td class="r">${pct2(ctr)}</td>
+      <td class="r">${pct2(hook)}</td>
+      <td class="r">${pct2(hold)}</td>
+      <td class="r">${brl(cph)}</td>
+    </tr>`;
+  }).join('');
+}
+
+function getF(id) { const v = document.getElementById(id)?.value; return v !== '' && v != null ? +v : null; }
+
+function filterAds() {
+  const q        = document.getElementById('searchInput').value.toLowerCase();
+  const spendMin = getF('f-spend-min');
+  const roasMin  = getF('f-roas-min');
+  const cpaMax   = getF('f-cpa-max');
+  const ctrMin   = getF('f-ctr-min');
+  const hookMin  = getF('f-hook-min');
+  const holdMin  = getF('f-hold-min');
+
+  const filtered = allAds.filter(a => {
+    if (q && !a.name.toLowerCase().includes(q) && !a.adset.toLowerCase().includes(q)) return false;
+    const roas = a.spend ? a.pv/a.spend : 0;
+    const cpa  = a.pur   ? a.spend/a.pur : 0;
+    const ctr  = a.ctr_den ? a.ctr_num/a.ctr_den : 0;
+    const hook = a.imp   ? a.vw/a.imp*100 : 0;
+    const hold = a.imp   ? a.thru/a.imp*100 : 0;
+    if (spendMin != null && a.spend < spendMin) return false;
+    if (roasMin  != null && roas < roasMin)     return false;
+    if (cpaMax   != null && cpa  > cpaMax)      return false;
+    if (ctrMin   != null && ctr  < ctrMin)      return false;
+    if (hookMin  != null && hook < hookMin)      return false;
+    if (holdMin  != null && hold < holdMin)      return false;
+    return true;
+  });
+  renderAds(filtered);
+}
+
+function clearFilters() {
+  ['f-spend-min','f-roas-min','f-cpa-max','f-ctr-min','f-hook-min','f-hold-min'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('searchInput').value = '';
+  renderAds(allAds);
+}
+
+// ── Por Pessoa ────────────────────────────────────────────────────────────────
+async function loadPessoas() {
+  show('load-pessoas'); hide('content-pessoas');
+  try {
+    const rows = await sbFetch('meta_ads_insights',
+      'creator_1,creator_2,spend,purchase_value,clicks,impressions,purchases,video_view,video_thruplay_watched_actions,outbound_ctr'
+    );
+    if (!rows) return;
+
+    const TEAM = [...COPYS, ...EDITORAS];
+    const p = {};
+    TEAM.forEach(n => p[n] = { spend:0, pv:0, clicks:0, imp:0, pur:0, vw:0, thru:0, ctr_num:0, ctr_den:0 });
+
+    rows.forEach(r => {
+      [r.creator_1, r.creator_2].forEach(name => {
+        if (!name || !p[name]) return;
+        p[name].spend  += +r.spend || 0;
+        p[name].pv     += +r.purchase_value || 0;
+        p[name].clicks += +r.clicks || 0;
+        p[name].imp    += +r.impressions || 0;
+        p[name].pur    += +r.purchases || 0;
+        p[name].vw     += +r.video_view || 0;
+        p[name].thru   += +r.video_thruplay_watched_actions || 0;
+        if (r.outbound_ctr && r.impressions) { p[name].ctr_num += +r.outbound_ctr * +r.impressions; p[name].ctr_den += +r.impressions; }
+      });
+    });
+
+    document.getElementById('tbody-copys').innerHTML = COPYS.map(n => {
+      const d = p[n];
+      const roas = d.spend ? d.pv/d.spend : 0;
+      const ctr  = d.ctr_den ? d.ctr_num/d.ctr_den : 0;
+      const hook = d.imp ? d.vw/d.imp*100 : 0;
+      const cpa  = d.pur ? d.spend/d.pur : 0;
+      return `<tr><td style="font-weight:500">${n}</td><td class="r">${brl(d.spend)}</td><td class="hi">${num2(roas)}</td><td class="r">${pct2(ctr)}</td><td class="r">${pct2(hook)}</td><td class="r">${brl(cpa)}</td></tr>`;
+    }).join('');
+
+    document.getElementById('tbody-editoras').innerHTML = EDITORAS.map(n => {
+      const d = p[n];
+      const roas  = d.spend ? d.pv/d.spend : 0;
+      const hold  = d.imp   ? d.thru/d.imp*100 : 0;
+      const ratio = d.vw    ? d.thru/d.vw : 0;
+      return `<tr><td style="font-weight:500">${n}</td><td class="r">${brl(d.spend)}</td><td class="hi">${num2(roas)}</td><td class="r">${pct2(hold)}</td><td class="r">${pct2(ratio * 100)}</td></tr>`;
+    }).join('');
+
+    hide('load-pessoas'); show('content-pessoas');
+  } catch(e) { showErr(e.message); hide('load-pessoas'); }
+}
+
+// ── Utils ─────────────────────────────────────────────────────────────────────
+function show(id) { document.getElementById(id).style.display = id.startsWith('load') ? 'flex' : 'block'; }
+function hide(id) { document.getElementById(id).style.display = 'none'; }
+function set(id, val) { document.getElementById(id).textContent = val; }
+
+function switchTab(pane, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('pane-'+pane).classList.add('active');
+  if (pane === 'pessoas') loadPessoas();
+  if (pane === 'graficos') loadGraficos();
+}
+
+function loadAll() {
+  clearErr();
+  loadGeral();
+  loadAds();
+  const active = document.querySelector('.pane.active')?.id;
+  if (active === 'pane-pessoas') loadPessoas();
+}
+
+// ── Config ────────────────────────────────────────────────────────────────────
+function openConfig() {
+  document.getElementById('cfgUrl').value = SB_URL;
+  document.getElementById('cfgKey').value = SB_KEY;
+  document.getElementById('configModal').style.display = 'flex';
+}
+function closeConfig() { document.getElementById('configModal').style.display = 'none'; }
+function saveConfig() {
+  SB_URL = document.getElementById('cfgUrl').value.trim().replace(/\/$/, '');
+  SB_KEY = document.getElementById('cfgKey').value.trim();
+  localStorage.setItem('sb_url', SB_URL);
+  localStorage.setItem('sb_key', SB_KEY);
+  closeConfig();
+  loadAll();
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+const init = getRange('month');
+FROM = init.from; TO = init.to;
+updatePeriodLabel();
+if (!SB_URL || !SB_KEY) openConfig(); else loadAll();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+// ── Gráficos ──────────────────────────────────────────────────────────────────
+let chartTemporal = null, chartCopys = null, chartEditoras = null;
+let chartCopysRoas = null, chartEditorasRoas = null;
+let currentMetric = 'spend';
+let temporalData = [];
+let pessoasData = {};
+
+const METRIC_LABELS = {
+  spend: 'Investimento (R$)', roas: 'ROAS', cpa: 'CPA (R$)',
+  hook: 'Hook rate (%)', hold: 'Hold rate (%)', ctr: 'CTR (%)'
+};
+
+const METRIC_COLORS = {
+  spend: '#d4f044', roas: '#4dffb4', cpa: '#ff5c5c',
+  hook: '#5ca8ff', hold: '#f0a050', ctr: '#c084fc'
+};
+
+function getMetricValue(row, metric) {
+  const imp   = +row.impressions || 0;
+  const spend = +row.spend || 0;
+  const pv    = +row.purchase_value || 0;
+  const pur   = +row.purchases || 0;
+  const vw    = +row.video_view || 0;
+  const thru  = +row.video_thruplay_watched_actions || 0;
+  const ctr_n = +row.outbound_ctr_weighted || 0;
+  const ctr_d = +row.impressions_for_ctr || 0;
+  if (metric === 'spend') return spend;
+  if (metric === 'roas')  return spend ? pv/spend : 0;
+  if (metric === 'cpa')   return pur ? spend/pur : 0;
+  if (metric === 'hook')  return imp ? vw/imp*100 : 0;
+  if (metric === 'hold')  return imp ? thru/imp*100 : 0;
+  if (metric === 'ctr')   return ctr_d ? ctr_n/ctr_d : 0;
+  return 0;
+}
+
+function destroyChart(c) { if (c) { c.destroy(); } return null; }
+
+function buildTemporal(metric) {
+  const labels = temporalData.map(r => r.date_start.split('-').reverse().join('/'));
+  const data   = temporalData.map(r => +getMetricValue(r, metric).toFixed(2));
+  const color  = METRIC_COLORS[metric];
+
+  chartTemporal = destroyChart(chartTemporal);
+  chartTemporal = new Chart(document.getElementById('chartTemporal'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: METRIC_LABELS[metric],
+        data,
+        borderColor: color,
+        backgroundColor: color + '18',
+        borderWidth: 2,
+        pointRadius: data.length > 30 ? 0 : 3,
+        pointBackgroundColor: color,
+        tension: 0.3,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#666', font: { family: 'DM Mono', size: 10 }, maxTicksLimit: 10 }, grid: { color: 'rgba(255,255,255,0.05)' } },
+        y: { ticks: { color: '#666', font: { family: 'DM Mono', size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } }
+      }
+    }
+  });
+  document.getElementById('chart-title').textContent = METRIC_LABELS[metric] + ' ao longo do tempo';
+}
+
+function buildBarChart(canvasId, labels, data, colors, existingChart) {
+  existingChart = destroyChart(existingChart);
+  existingChart = new Chart(document.getElementById(canvasId), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{ data, backgroundColor: colors, borderRadius: 6, borderSkipped: false }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#666', font: { family: 'DM Mono', size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
+        y: { ticks: { color: '#888', font: { family: 'DM Mono', size: 11 } }, grid: { display: false } }
+      }
+    }
+  });
+  return existingChart;
+}
+
+function buildPessoasCharts(data) {
+  const TEAM = [...COPYS, ...EDITORAS];
+
+  // Investimento por pessoa
+  const spendCopys  = COPYS.map(n => +(data[n]?.spend || 0).toFixed(2));
+  const spendEdit   = EDITORAS.map(n => +(data[n]?.spend || 0).toFixed(2));
+  chartCopys    = buildBarChart('chartCopys',    COPYS,    spendCopys,  ['#d4f044','#d4f044'], chartCopys);
+  chartEditoras = buildBarChart('chartEditoras', EDITORAS, spendEdit,   ['#4dffb4','#4dffb4'], chartEditoras);
+
+  // ROAS por pessoa
+  const roasCopys = COPYS.map(n => {
+    const d = data[n]; return d?.spend ? +(d.pv/d.spend).toFixed(2) : 0;
+  });
+  const roasEdit = EDITORAS.map(n => {
+    const d = data[n]; return d?.spend ? +(d.pv/d.spend).toFixed(2) : 0;
+  });
+  chartCopysRoas    = buildBarChart('chartCopysRoas',    COPYS,    roasCopys, ['#5ca8ff','#5ca8ff'], chartCopysRoas);
+  chartEditorasRoas = buildBarChart('chartEditorasRoas', EDITORAS, roasEdit,  ['#f0a050','#f0a050'], chartEditorasRoas);
+}
+
+async function loadGraficos() {
+  show('load-graficos'); hide('content-graficos');
+  try {
+    const [rows, pessoasRows] = await Promise.all([
+      sbFetch('meta_ads_daily_totals',
+        'date_start,spend,purchase_value,impressions,clicks,purchases,video_view,video_thruplay_watched_actions,outbound_ctr_weighted,impressions_for_ctr'
+      ),
+      sbFetch('meta_ads_insights',
+        'creator_1,creator_2,spend,purchase_value,impressions,purchases,video_view,video_thruplay_watched_actions'
+      )
+    ]);
+    if (!rows) return;
+
+    // Ordena por data
+    temporalData = rows.sort((a,b) => a.date_start.localeCompare(b.date_start));
+
+    // Agrega por pessoa
+    const TEAM = [...COPYS, ...EDITORAS];
+    const pd = {};
+    TEAM.forEach(n => pd[n] = { spend:0, pv:0, imp:0, pur:0, vw:0, thru:0 });
+    (pessoasRows || []).forEach(r => {
+      [r.creator_1, r.creator_2].forEach(name => {
+        if (!name || !pd[name]) return;
+        pd[name].spend += +r.spend || 0;
+        pd[name].pv    += +r.purchase_value || 0;
+        pd[name].imp   += +r.impressions || 0;
+        pd[name].pur   += +r.purchases || 0;
+        pd[name].vw    += +r.video_view || 0;
+        pd[name].thru  += +r.video_thruplay_watched_actions || 0;
+      });
+    });
+    pessoasData = pd;
+
+    buildTemporal(currentMetric);
+    buildPessoasCharts(pessoasData);
+
+    hide('load-graficos'); show('content-graficos');
+  } catch(e) { showErr(e.message); hide('load-graficos'); }
+}
+
+// Botões de métrica
+document.getElementById('metricBtns')?.addEventListener('click', e => {
+  const btn = e.target.closest('[data-metric]');
+  if (!btn) return;
+  document.querySelectorAll('#metricBtns .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentMetric = btn.dataset.metric;
+  if (temporalData.length) buildTemporal(currentMetric);
+});
+</script>
+</body>
+</html>
