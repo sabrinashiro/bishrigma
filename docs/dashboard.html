@@ -435,7 +435,7 @@ async function loadGeral() {
   try {
     const [rows, freqRows, adsRows] = await Promise.all([
       sbFetch('meta_ads_daily_totals', 'spend,purchase_value,impressions,clicks,purchases,video_view,video_thruplay_watched_actions,outbound_ctr_weighted,impressions_for_ctr'),
-      sbFetch('meta_period_frequency', 'frequency,impressions,reach', `&date_start=eq.${FROM}&date_stop=eq.${TO}),
+      sbFetch('meta_account_frequency', 'frequency,impressions'),
       sbFetch('meta_ads_insights', 'spend,ad_created_time')
     ]);
     if (!rows) return;
@@ -455,8 +455,10 @@ async function loadGeral() {
     });
 
     // Frequência conta: média ponderada por impressões
-    const freqRow = freqRows && freqRows[0];
-    const freq = freqRow ? +freqRow.frequency : 0;;
+    let fq_num=0, fq_den=0;
+    (freqRows || []).forEach(r => {
+      if (r.frequency && r.impressions) { fq_num += +r.frequency * +r.impressions; fq_den += +r.impressions; }
+    });
 
     // Métricas
     const roas = spend ? pv/spend : 0;
