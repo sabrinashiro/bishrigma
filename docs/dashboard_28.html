@@ -61,7 +61,7 @@
   .badge { font-size: 10px; font-family: var(--mono); padding: 3px 10px; border-radius: 999px; font-weight: 500; margin-left: 8px; }
   .badge.copy { background: #dbeafe; color: #1d4ed8; border: 1px solid #bfdbfe; }
   .badge.editor { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
-  
+
   /* ── Champions ── */
   .champions-wrap { background: var(--champion-bg); border: 2px solid var(--champion-border); border-radius: 12px; padding: 20px 24px; margin-bottom: 28px; }
   .champions-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; }
@@ -83,7 +83,7 @@
   tr:last-child td { border-bottom: none; }
   tbody tr:hover td { background: var(--surface2); }
   .champion-row { background: rgba(251,191,36,0.05); }
-  
+
   .search-wrap { position: relative; margin-bottom: 12px; }
   .search-wrap input { width: 100%; font-family: var(--mono); font-size: 12px; padding: 10px 16px 10px 36px; background: var(--surface); border: 1px solid var(--border2); border-radius: 8px; color: var(--text); }
   .search-wrap input:focus { outline: none; border-color: var(--accent); }
@@ -277,6 +277,7 @@
       </div>
     </div>
   </div>
+
   <!-- GRÁFICOS -->
   <div class="pane" id="pane-graficos">
     <div class="loading" id="load-graficos"><div class="spinner"></div>carregando...</div>
@@ -432,9 +433,10 @@ function clearErr() { document.getElementById('errorBox').style.display = 'none'
 async function loadGeral() {
   show('load-geral'); hide('content-geral');
   try {
-    const [rows, freqRows] = await Promise.all([
+    const [rows, freqRows, adsRows] = await Promise.all([
       sbFetch('meta_ads_daily_totals', 'spend,purchase_value,impressions,clicks,purchases,video_view,video_thruplay_watched_actions,outbound_ctr_weighted,impressions_for_ctr'),
-      sbFetch('meta_account_frequency', 'frequency,impressions')
+      sbFetch('meta_account_frequency', 'frequency,impressions'),
+      sbFetch('meta_ads_insights', 'spend,ad_created_time')
     ]);
     if (!rows) return;
 
@@ -446,8 +448,8 @@ async function loadGeral() {
       imp    += +r.impressions || 0;
       clicks += +r.clicks || 0;
       pur    += +r.purchases || 0;
-      vw     += +r.video_view || 0;           // video_view 3s → hook
-      thru   += +r.video_thruplay_watched_actions || 0;  // thruplay → hold
+      vw     += +r.video_view || 0;
+      thru   += +r.video_thruplay_watched_actions || 0;
       ctr_num += +r.outbound_ctr_weighted || 0;
       ctr_den += +r.impressions_for_ctr || 0;
     });
@@ -459,15 +461,13 @@ async function loadGeral() {
     });
 
     // Métricas
-    // hook = video_view_3s / impressions
-    // hold = thruplay / impressions
     const roas = spend ? pv/spend : 0;
     const cpa  = pur   ? spend/pur : 0;
     const cvr  = imp   ? clicks/imp*100 : 0;
     const ctr  = ctr_den ? ctr_num/ctr_den : 0;
     const hook = imp   ? vw/imp*100 : 0;
     const hold = imp   ? thru/imp*100 : 0;
-    const cph  = vw    ? spend/vw : 0;   // custo por hook = spend / video_views_3s
+    const cph  = vw    ? spend/vw : 0;
     const freq = fq_den ? fq_num/fq_den : 0;
 
     set('v-spend', brl(spend));
@@ -480,38 +480,31 @@ async function loadGeral() {
     set('v-hold',  pct2(hold));
     set('v-cph',   brl(cph));
 
+    // % invest. em criativos do período
+    // Soma o spend das linhas cujo ad_created_time cai dentro de FROM→TO
+    const spendPeriod = (adsRows || []).reduce((sum, r) => {
+      if (!r.ad_created_time) return sum;
+      const created = r.ad_created_time.split('T')[0]; // descarta hora se vier como datetime
+      if (created >= FROM && created <= TO) return sum + (+r.spend || 0);
+      return sum;
+    }, 0);
+    const pct = spend > 0 ? spendPeriod / spend * 100 : 0;
+    set('v-pct-period', pct2(pct));
+
     hide('load-geral'); show('content-geral');
   } catch(e) { showErr(e.message); hide('load-geral'); }
 }
 
 // ── Anúncios ──────────────────────────────────────────────────────────────────
-async function loadPctPeriod(totalSpend) {
-  // % do spend no período que foi em anúncios CRIADOS nesse mesmo período
-  // Usa view meta_period_creative_spend que agrupa por date_start e ad_created_time
-  try {
-    if (!SB_URL || !SB_KEY) return;
-    // Busca da view: filtra date_start no período E ad_created_time no período
-    const url = `${SB_URL}/rest/v1/meta_period_creative_spend?select=spend,ad_created_time&date_start=gte.${FROM}&date_start=lte.${TO}&ad_created_time=gte.${FROM}&ad_created_time=lte.${TO}&limit=100000`;
-    const res = await fetch(url, { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } });
-    const rows = await res.json();
-    if (!Array.isArray(rows) || rows.length === 0) { set('v-pct-period', '0,00%'); return; }
-    const spendCreated = rows.reduce((sum, r) => sum + (+r.spend || 0), 0);
-    const pct = totalSpend > 0 ? spendCreated / totalSpend * 100 : 0;
-    set('v-pct-period', pct2(pct));
-  } catch(e) { set('v-pct-period', '—'); }
-}
-
 async function loadChampions() {
   show('load-champions'); hide('content-champions');
   try {
-    // Busca ads publicados no período com spend e roas calculados
     const rows = await sbFetch('meta_ads_insights',
       'ad_id,ad_name,adset_name,creator_1,creator_2,spend,purchase_value,impressions,purchases,video_view,video_thruplay_watched_actions,ad_created_time',
       `&ad_created_time=gte.${FROM}&ad_created_time=lte.${TO}`
     );
     if (!rows) return;
 
-    // Agrega por anúncio
     const map = {};
     rows.forEach(r => {
       const k = r.ad_id || r.ad_name || '(sem nome)';
@@ -529,7 +522,6 @@ async function loadChampions() {
       a.thru  += +r.video_thruplay_watched_actions||0;
     });
 
-    // Filtra campeões: ROAS > 5.5 e spend > 1000
     const champions = Object.values(map).filter(a => {
       const roas = a.spend ? a.pv/a.spend : 0;
       return roas > 5.5 && a.spend > 1000;
@@ -549,7 +541,7 @@ async function loadChampions() {
         const hold = a.imp  ? a.thru/a.imp*100 : 0;
         const copy = [a.c1,a.c2].filter(x => x && COPYS.includes(x)).join(', ') || '—';
         const edit = [a.c1,a.c2].filter(x => x && EDITORAS.includes(x)).join(', ') || '—';
-        const created = a.created ? a.created.split('-').reverse().join('/') : '—';
+        const created = a.created ? a.created.split('T')[0].split('-').reverse().join('/') : '—';
         return `<tr>
           <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.name}</td>
           <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted2);font-size:11px">${a.adset}</td>
@@ -677,7 +669,6 @@ async function loadPessoas() {
     rows.forEach(r => {
       const atc = +r.add_to_cart || 0;
       [r.creator_1, r.creator_2].forEach(rawName => {
-        // Normaliza variantes de César (com e sem acento)
         const name = rawName && CESAR_VARIANTS.includes(rawName) ? 'César' : rawName;
         if (!name || !p[name]) return;
         p[name].spend  += +r.spend || 0;
@@ -903,7 +894,6 @@ function buildPessoaLineChart(canvasId, labels, datasets, existingChart) {
 function buildPessoasCharts(metric) {
   if (!pessoasTemporalData.length) return;
 
-  // Agrupa dados por dia por pessoa
   const allDates = [...new Set(pessoasTemporalData.map(r => r.date_start).filter(d => d))].sort();
   const labels = allDates.map(d => d ? d.split('-').reverse().join('/') : '');
 
@@ -945,10 +935,7 @@ async function loadGraficos() {
     ]);
     if (!rows) return;
 
-    // Ordena por data
     temporalData = rows.sort((a,b) => a.date_start.localeCompare(b.date_start));
-
-    // Salva dados por pessoa/dia para gráficos de progressão
     pessoasTemporalData = pessoasRows || [];
 
     buildTemporal(currentMetric);
@@ -958,7 +945,6 @@ async function loadGraficos() {
   } catch(e) { showErr(e.message); hide('load-graficos'); }
 }
 
-// Botões de métrica por pessoa
 document.getElementById('pessoaMetricBtns')?.addEventListener('click', e => {
   const btn = e.target.closest('[data-pmetric]');
   if (!btn) return;
@@ -968,7 +954,6 @@ document.getElementById('pessoaMetricBtns')?.addEventListener('click', e => {
   if (pessoasTemporalData.length) buildPessoasCharts(currentPMetric);
 });
 
-// Botões de métrica
 document.getElementById('metricBtns')?.addEventListener('click', e => {
   const btn = e.target.closest('[data-metric]');
   if (!btn) return;
