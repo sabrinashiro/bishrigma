@@ -885,7 +885,7 @@ async function loadAds() {
 
     allAds = Object.values(map).sort((a,b) => b.spend - a.spend);
     renderAds(allAds);
-    renderParametros();
+    if (document.getElementById('tbody-escalar-video')) renderParametros();
     hide('load-ads'); show('content-ads');
   } catch(e) { showErr(e.message); hide('load-ads'); }
 }
