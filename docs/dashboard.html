@@ -353,46 +353,68 @@
   <!-- PARÂMETROS -->
 <div class="pane" id="pane-parametros">
   <div class="section-title" style="margin-bottom:20px">Parâmetros de classificação dos anúncios</div>
-function renderParametros() {
-  if (!allAds.length) return;
-  const groups = { escalar: [], potencial: [], otimizar: [], pausar: [] };
-  allAds.forEach(a => {
-    const { cls } = classifyAd(a);
-    if (cls === 'score-escalar')   groups.escalar.push(a);
-    if (cls === 'score-potencial') groups.potencial.push(a);
-    if (cls === 'score-otimizar')  groups.otimizar.push(a);
-    if (cls === 'score-pausar')    groups.pausar.push(a);
-  });
-  const adRow = a => {
-    const roas = a.spend ? a.pv/a.spend : 0;
-    const cpa  = a.pur   ? a.spend/a.pur : 0;
-    const hook = a.imp   ? a.vw/a.imp*100 : 0;
-    const hold = a.imp   ? a.thru/a.imp*100 : 0;
-    const copy = [a.c1,a.c2].filter(x => x && COPYS.includes(x)).join(', ') || '—';
-    const edit = [a.c1,a.c2].filter(x => x && EDITORAS.includes(x)).join(', ') || '—';
-    const idx  = allAds.indexOf(a);
-    return `<tr>
-      <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
-        <span style="cursor:default" onmouseenter="showTooltip(event,allAds[${idx}])" onmouseleave="hideTooltip()">${a.name}</span>
-      </td>
-      <td>${copy}</td><td>${edit}</td>
-      <td class="r">${brl(a.spend)}</td>
-      <td class="hi">${num2(roas)}</td>
-      <td class="r">${brl(cpa)}</td>
-      <td class="r">${pct2(hook)}</td>
-      <td class="r">${pct2(hold)}</td>
-      <td class="r" style="font-family:var(--mono)">${a.pur || 0}</td>
-    </tr>`;
-  };
-  ['escalar','potencial','otimizar','pausar'].forEach(g => {
-    const tbody = document.getElementById('tbody-'+g);
-    if (!tbody) return;
-    tbody.innerHTML = groups[g].length === 0
-      ? `<tr><td colspan="9" style="color:var(--muted);font-family:var(--mono);font-size:11px;text-align:center;padding:16px">Nenhum anúncio nesta classificação</td></tr>`
-      : groups[g].map(adRow).join('');
-  });
-}
 
+  <!-- TABELAS POR SCORE -->
+<div style="margin-bottom:32px">
+  <div class="section-title" style="margin-bottom:16px">Anúncios por classificação</div>
+
+  <div style="margin-bottom:24px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <span class="score-badge score-escalar">🟢 escalar</span>
+      <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">ROAS bom + volume ≥ 20 compras + frequência ok</span>
+    </div>
+    <div class="table-wrap">
+      <table><thead><tr>
+        <th>Anúncio</th><th>Copy</th><th>Editora</th>
+        <th class="r">Invest.</th><th class="r">ROAS</th><th class="r">CPA</th>
+        <th class="r">Hook</th><th class="r">Hold</th><th class="r">Compras</th>
+      </tr></thead><tbody id="tbody-escalar"></tbody></table>
+    </div>
+  </div>
+
+  <div style="margin-bottom:24px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <span class="score-badge score-potencial">🟡 potencial</span>
+      <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">Funil funciona mas volume ainda insuficiente</span>
+    </div>
+    <div class="table-wrap">
+      <table><thead><tr>
+        <th>Anúncio</th><th>Copy</th><th>Editora</th>
+        <th class="r">Invest.</th><th class="r">ROAS</th><th class="r">CPA</th>
+        <th class="r">Hook</th><th class="r">Hold</th><th class="r">Compras</th>
+      </tr></thead><tbody id="tbody-potencial"></tbody></table>
+    </div>
+  </div>
+
+  <div style="margin-bottom:24px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <span class="score-badge score-otimizar">🔵 otimizar criativo</span>
+      <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">Funil de baixo ok — Hook ou Hold fracos</span>
+    </div>
+    <div class="table-wrap">
+      <table><thead><tr>
+        <th>Anúncio</th><th>Copy</th><th>Editora</th>
+        <th class="r">Invest.</th><th class="r">ROAS</th><th class="r">CPA</th>
+        <th class="r">Hook</th><th class="r">Hold</th><th class="r">Compras</th>
+      </tr></thead><tbody id="tbody-otimizar"></tbody></table>
+    </div>
+  </div>
+
+  <div style="margin-bottom:32px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <span class="score-badge score-pausar">🔴 pausar</span>
+      <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">Múltiplas métricas quebradas — sem sinal positivo</span>
+    </div>
+    <div class="table-wrap">
+      <table><thead><tr>
+        <th>Anúncio</th><th>Copy</th><th>Editora</th>
+        <th class="r">Invest.</th><th class="r">ROAS</th><th class="r">CPA</th>
+        <th class="r">Hook</th><th class="r">Hold</th><th class="r">Compras</th>
+      </tr></thead><tbody id="tbody-pausar"></tbody></table>
+    </div>
+  </div>
+</div>
+  
   <!-- ROAS -->
   <div style="margin-bottom:24px">
     <div style="font-size:13px;font-weight:600;margin-bottom:10px">ROAS</div>
