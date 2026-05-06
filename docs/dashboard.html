@@ -752,7 +752,6 @@ async function loadGeral() {
       thru   += +r.video_thruplay_watched_actions || 0;
       ctr_num += +r.outbound_ctr_weighted || 0;
       ctr_den += +r.impressions_for_ctr || 0;
-      atc    += +r.add_to_cart || 0;
     });
 
     // Frequência conta: média ponderada por impressões
@@ -974,7 +973,7 @@ async function loadPessoas() {
   show('load-pessoas'); hide('content-pessoas');
   try {
     const rows = await sbFetch('meta_pessoa_totals',
-      'creator_1,creator_2,spend,purchase_value,clicks,impressions,purchases,video_view,video_thruplay_watched_actions,outbound_ctr_weighted,impressions_for_ctr,add_to_cart'
+      'creator_1,creator_2,spend,purchase_value,clicks,impressions,purchases,video_view,video_thruplay_watched_actions,outbound_ctr_weighted,impressions_for_ctr'
     );
     if (!rows) return;
 
@@ -983,7 +982,6 @@ async function loadPessoas() {
     TEAM.forEach(n => p[n] = { spend:0, pv:0, clicks:0, imp:0, pur:0, vw:0, thru:0, ctr_num:0, ctr_den:0, atc:0 });
 
     rows.forEach(r => {
-      const atc = +r.add_to_cart || 0;
       [r.creator_1, r.creator_2].forEach(rawName => {
         const name = rawName && CESAR_VARIANTS.includes(rawName) ? 'César' : rawName;
         if (!name || !p[name]) return;
@@ -1300,7 +1298,7 @@ async function loadGraficos() {
   try {
     const [rows, pessoasRows] = await Promise.all([
       sbFetch('meta_ads_daily_totals',
-        'date_start,spend,purchase_value,impressions,clicks,purchases,video_view,video_thruplay_watched_actions,outbound_ctr_weighted,impressions_for_ctr,add_to_cart'
+        'date_start,spend,purchase_value,impressions,clicks,purchases,video_view,video_thruplay_watched_actions,outbound_ctr_weighted,impressions_for_ctr'
       ),
       sbFetch('meta_ads_insights',
         'date_start,creator_1,creator_2,spend,purchase_value,impressions,purchases,video_view,video_thruplay_watched_actions'
