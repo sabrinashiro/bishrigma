@@ -1400,21 +1400,24 @@ document.getElementById('metricBtns')?.addEventListener('click', e => {
 const tooltip = document.getElementById('scoreTooltip');
 
 function showTooltip(e, a) {
+  const tooltip = document.getElementById('scoreTooltip');
   tooltip.innerHTML = buildTooltip(a);
   tooltip.style.display = 'block';
   positionTooltip(e);
 }
 
 function positionTooltip(e) {
-  const x = e.clientX + 12;
-  const y = e.clientY + 12;
-  const w = tooltip.offsetWidth;
-  const h = tooltip.offsetHeight;
-  tooltip.style.left = (x + w > window.innerWidth  ? x - w - 24 : x) + 'px';
-  tooltip.style.top  = (y + h > window.innerHeight ? y - h - 24 : y) + 'px';
+  const tooltip = document.getElementById('scoreTooltip');
+  const x = e.clientX+12, y = e.clientY+12, w = tooltip.offsetWidth, h = tooltip.offsetHeight;
+  tooltip.style.left = (x+w > window.innerWidth  ? x-w-24 : x)+'px';
+  tooltip.style.top  = (y+h > window.innerHeight ? y-h-24 : y)+'px';
 }
 
+function hideTooltip() {
+  document.getElementById('scoreTooltip').style.display = 'none';
+}
 document.addEventListener('mousemove', e => {
+  const tooltip = document.getElementById('scoreTooltip');
   if (tooltip.style.display !== 'none') positionTooltip(e);
 });
 
