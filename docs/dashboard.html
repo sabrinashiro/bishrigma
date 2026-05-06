@@ -1120,14 +1120,29 @@ document.getElementById('metricBtns')?.addEventListener('click', e => {
       <span>${label}</span>
       <span class="${ok ? 'tp-ok' : 'tp-bad'}">${ok ? '✓' : '✗'} ${fmt(val)}</span>
     </div>`;
-
-  return `
+  let comment = '';
+  if (hook < 28 && hold < 7.7 && roas >= 5.2)
+    comment = 'O produto vende mas o vídeo não tá chegando em ninguém. Regravar com abertura mais forte e corpo que segure.';
+  else if (hook >= 28 && hold < 7.7)
+    comment = 'A abertura para as pessoas mas o vídeo perde elas logo depois. Problema de edição, ritmo ou narrativa.';
+  else if (hook < 28 && hold >= 7.7)
+    comment = 'Quem assiste compra — mas poucos estão parando. Focar numa abertura mais disruptiva.';
+  else if (hook >= 28 && hold >= 7.7 && roas < 4.5)
+    comment = 'Criativo sólido mas o funil quebra depois do clique. Verificar página, oferta e preço.';
+  else if (hook >= 28 && hold >= 7.7 && cpa > 30)
+    comment = 'Criativo ok mas tá caro pra converter. Testar upsell, kit ou frete grátis pra melhorar CPA.';
+  else if (hook >= 28 && hold >= 7.7 && roas >= 5.2)
+    comment = 'Criativo funcionando. Validar volume por pelo menos 7 dias antes de escalar orçamento.';
+  else
+    comment = 'Dados ainda insuficientes pra diagnóstico preciso. Aguardar mais volume.';
+   return `
     <div class="tp-title">diagnóstico do criativo</div>
     ${row('Hook rate', hook, hook >= 28, v => v.toFixed(1)+'%')}
     ${row('Hold rate', hold, hold >= 7.7, v => v.toFixed(1)+'%')}
     ${row('CTR',       ctr,  ctr  >= 1.6, v => v.toFixed(2)+'%')}
     ${row('ROAS',      roas, roas >= 5.2, v => v.toFixed(2))}
     ${row('CPA',       cpa,  cpa  <= 28,  v => 'R$ '+v.toFixed(2))}
+    <div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border);color:var(--muted2);line-height:1.6">${comment}</div>
   `;
 }
 
