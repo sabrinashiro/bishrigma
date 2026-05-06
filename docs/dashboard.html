@@ -524,7 +524,8 @@ function classifyAd(a) {
   const hold  = a.imp   ? a.thru/a.imp*100 : 0;
   const freq  = a.freq  || 0;
   const ctr  = a.ctr_den ? a.ctr_num/a.ctr_den : 0;
-  const isImage = a.vw === 0 && a.thru === 0 && a.imp >= 200;
+  const imgPattern = /(IMG|IMAGEM|ESTATICO|ESTÁTICO|CARROSSEL)/i;
+  const isImage = imgPattern.test(a.name) || (a.vw === 0 && a.thru === 0 && a.imp >= 200);
 
   // Sem volume mínimo — não classifica
   if (a.spend < 80 && a.pur < 5) return { label: '—', cls: '' };
@@ -1220,7 +1221,8 @@ document.getElementById('metricBtns')?.addEventListener('click', e => {
   const roas = a.spend ? a.pv/a.spend : 0;
   const cpa  = a.pur  ? a.spend/a.pur : 0;
   const ctr  = a.ctr_den ? a.ctr_num/a.ctr_den : 0;
-  const isImage = a.vw === 0 && a.thru === 0 && a.imp >= 200;
+  const imgPattern = /(IMG|IMAGEM|ESTATICO|ESTÁTICO|CARROSSEL)/i;
+  const isImage = imgPattern.test(a.name) || (a.vw === 0 && a.thru === 0 && a.imp >= 200);
 
   const row = (label, val, ok, fmt) =>
     `<div class="tp-row">
