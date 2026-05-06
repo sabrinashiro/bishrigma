@@ -752,6 +752,7 @@ async function loadGeral() {
       thru   += +r.video_thruplay_watched_actions || 0;
       ctr_num += +r.outbound_ctr_weighted || 0;
       ctr_den += +r.impressions_for_ctr || 0;
+      atc    += +r.add_to_cart || 0;
     });
 
     // Frequência conta: média ponderada por impressões
@@ -982,6 +983,7 @@ async function loadPessoas() {
     TEAM.forEach(n => p[n] = { spend:0, pv:0, clicks:0, imp:0, pur:0, vw:0, thru:0, ctr_num:0, ctr_den:0, atc:0 });
 
     rows.forEach(r => {
+      const atc = +r.add_to_cart || 0;
       [r.creator_1, r.creator_2].forEach(rawName => {
         const name = rawName && CESAR_VARIANTS.includes(rawName) ? 'César' : rawName;
         if (!name || !p[name]) return;
