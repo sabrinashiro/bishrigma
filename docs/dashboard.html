@@ -180,7 +180,6 @@
       <div class="card sm"><div class="lbl">CPM</div><div class="val" id="v-cpm">—</div></div>
       <div class="card sm"><div class="lbl">Hook rate</div><div class="val" id="v-hook">—</div></div>
       <div class="card sm"><div class="lbl">Hold rate</div><div class="val" id="v-hold">—</div></div>
-      <div class="card sm"><div class="lbl">AC/Clique</div><div class="val" id="v-atc">—</div></div>
       <div class="card sm"><div class="lbl">Resultados</div><div class="val" id="v-pur">—</div></div>
       <div class="card sm"><div class="lbl">Custo/hook</div><div class="val" id="v-cph">—</div></div>
       <div class="card sm" style="grid-column:span 2"><div class="lbl">% Invest. em criativos do período</div><div class="val" id="v-pct-period">—</div></div>
@@ -771,7 +770,6 @@ async function loadGeral() {
     const hook = imp    ? vw/imp*100 : 0;
     const hold = imp    ? thru/imp*100 : 0;
     const cph  = vw     ? spend/vw : 0;
-    const atcClk = clicks ? atc/clicks*100 : 0;
     const freq = fq_den ? fq_num/fq_den : 0;
     
     set('v-spend', brl(spend));
@@ -783,7 +781,6 @@ async function loadGeral() {
     set('v-cpm',   brl(cpm));
     set('v-hook',  pct2(hook));
     set('v-hold',  pct2(hold));
-    set('v-atc',   pct2(atcClk));
     set('v-pur',   pur);
     set('v-cph',   brl(cph));
 
