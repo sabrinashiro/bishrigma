@@ -650,7 +650,7 @@ function renderAds(list) {
     return `<tr>
       <td><span class="score-badge ${cls}">${label}</span></td>
       <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.name}</td>
-      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted2);font-size:11px">${a.adset}</td>
+      <td style="min-width:200px;max-width:300px;overflow-x:auto;white-space:nowrap;color:var(--muted2);font-size:11px">${a.adset}</td>
       <td>${copy}</td><td>${edit}</td>
       <td class="r">${brl(a.spend)}</td>
       <td class="hi">${num2(roas)}</td>
