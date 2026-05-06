@@ -1335,7 +1335,9 @@ document.getElementById('metricBtns')?.addEventListener('click', e => {
   currentMetric = btn.dataset.metric;
   if (temporalData.length) buildTemporal(currentMetric);
 });
-  function buildTooltip(a) {
+const tooltip = document.getElementById('scoreTooltip');
+
+function buildTooltip(a) {
   const hook = a.imp ? a.vw/a.imp*100 : 0;
   const hold = a.imp ? a.thru/a.imp*100 : 0;
   const roas = a.spend ? a.pv/a.spend : 0;
@@ -1343,13 +1345,8 @@ document.getElementById('metricBtns')?.addEventListener('click', e => {
   const ctr  = a.ctr_den ? a.ctr_num/a.ctr_den : 0;
   const imgPattern = /(IMG|IMAGEM|ESTATICO|ESTÁTICO|CARROSSEL)/i;
   const isImage = imgPattern.test(a.name) || (a.vw === 0 && a.thru === 0 && a.imp >= 200);
-
   const row = (label, val, ok, fmt) =>
-    `<div class="tp-row">
-      <span>${label}</span>
-      <span class="${ok ? 'tp-ok' : 'tp-bad'}">${ok ? '✓' : '✗'} ${fmt(val)}</span>
-    </div>`;
-
+    `<div class="tp-row"><span>${label}</span><span class="${ok?'tp-ok':'tp-bad'}">${ok?'✓':'✗'} ${fmt(val)}</span></div>`;
   const rows = isImage
     ? `${row('CTR',  ctr,  ctr  >= 1.6, v => v.toFixed(2)+'%')}
        ${row('CPC',  a.clicks ? a.spend/a.clicks : 0, true, v => 'R$ '+v.toFixed(2))}
@@ -1360,62 +1357,48 @@ document.getElementById('metricBtns')?.addEventListener('click', e => {
        ${row('CTR',       ctr,  ctr  >= 1.6, v => v.toFixed(2)+'%')}
        ${row('ROAS',      roas, roas >= 5.2, v => v.toFixed(2))}
        ${row('CPA',       cpa,  cpa  <= 28,  v => 'R$ '+v.toFixed(2))}`;
-
   let comment = '';
   if (isImage) {
-    if (ctr < 1.2)
-      comment = 'CTR crítico — o criativo não tá gerando cliques. Testar nova imagem ou headline.';
-    else if (ctr < 1.6)
-      comment = 'CTR mediano. A imagem chama atenção mas tem espaço pra melhorar headline ou contexto visual.';
-    else if (roas < 4.5)
-      comment = 'CTR ok mas o funil quebra depois do clique. Verificar página, oferta e preço.';
-    else if (cpa > 30)
-      comment = 'Imagem funciona mas CPA alto. Testar upsell ou frete grátis pra melhorar margem.';
-    else
-      comment = 'Imagem performando bem. Validar volume antes de escalar.';
+    if (ctr < 1.2) comment = 'CTR crítico — o criativo não tá gerando cliques. Testar nova imagem ou headline.';
+    else if (ctr < 1.6) comment = 'CTR mediano. A imagem chama atenção mas tem espaço pra melhorar headline ou contexto visual.';
+    else if (roas < 4.5) comment = 'CTR ok mas o funil quebra depois do clique. Verificar página, oferta e preço.';
+    else if (cpa > 30) comment = 'Imagem funciona mas CPA alto. Testar upsell ou frete grátis pra melhorar margem.';
+    else comment = 'Imagem performando bem. Validar volume antes de escalar.';
   } else {
-    if (hook < 28 && hold < 7.7 && roas >= 5.2)
-      comment = 'O produto vende mas o vídeo não tá chegando em ninguém. Regravar com abertura mais forte e corpo que segure.';
-    else if (hook >= 28 && hold < 7.7)
-      comment = 'A abertura para as pessoas mas o vídeo perde elas logo depois. Problema de edição, ritmo ou narrativa.';
-    else if (hook < 28 && hold >= 7.7)
-      comment = 'Quem assiste compra — mas poucos estão parando. Focar numa abertura mais disruptiva.';
-    else if (hook >= 28 && hold >= 7.7 && roas < 4.5)
-      comment = 'Criativo sólido mas o funil quebra depois do clique. Verificar página, oferta e preço.';
-    else if (hook >= 28 && hold >= 7.7 && cpa > 30)
-      comment = 'Criativo ok mas tá caro pra converter. Testar upsell, kit ou frete grátis pra melhorar CPA.';
-    else if (hook >= 28 && hold >= 7.7 && roas >= 5.2)
-      comment = 'Criativo funcionando. Validar volume por pelo menos 7 dias antes de escalar orçamento.';
-    else
-      comment = 'Dados ainda insuficientes pra diagnóstico preciso. Aguardar mais volume.';
+    if (hook < 28 && hold < 7.7 && roas >= 5.2) comment = 'O produto vende mas o vídeo não tá chegando em ninguém. Regravar com abertura mais forte e corpo que segure.';
+    else if (hook >= 28 && hold < 7.7) comment = 'A abertura para as pessoas mas o vídeo perde elas logo depois. Problema de edição, ritmo ou narrativa.';
+    else if (hook < 28 && hold >= 7.7) comment = 'Quem assiste compra — mas poucos estão parando. Focar numa abertura mais disruptiva.';
+    else if (hook >= 28 && hold >= 7.7 && roas < 4.5) comment = 'Criativo sólido mas o funil quebra depois do clique. Verificar página, oferta e preço.';
+    else if (hook >= 28 && hold >= 7.7 && cpa > 30) comment = 'Criativo ok mas tá caro pra converter. Testar upsell, kit ou frete grátis pra melhorar CPA.';
+    else if (hook >= 28 && hold >= 7.7 && roas >= 5.2) comment = 'Criativo funcionando. Validar volume por pelo menos 7 dias antes de escalar orçamento.';
+    else comment = 'Dados ainda insuficientes pra diagnóstico preciso. Aguardar mais volume.';
   }
-
   return `
     <div class="tp-title">diagnóstico — ${isImage ? 'imagem' : 'vídeo'}</div>
     ${rows}
-    <div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border);color:var(--muted2);line-height:1.6">${comment}</div>
-  `;
+    <div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border);color:var(--muted2);line-height:1.6">${comment}</div>`;
 }
 
 function showTooltip(e, a) {
-  const tooltip = document.getElementById('scoreTooltip');
   tooltip.innerHTML = buildTooltip(a);
   tooltip.style.display = 'block';
   positionTooltip(e);
 }
 
 function positionTooltip(e) {
-  const tooltip = document.getElementById('scoreTooltip');
-  const x = e.clientX+12, y = e.clientY+12, w = tooltip.offsetWidth, h = tooltip.offsetHeight;
-  tooltip.style.left = (x+w > window.innerWidth  ? x-w-24 : x)+'px';
-  tooltip.style.top  = (y+h > window.innerHeight ? y-h-24 : y)+'px';
+  const x = e.clientX + 12;
+  const y = e.clientY + 12;
+  const w = tooltip.offsetWidth;
+  const h = tooltip.offsetHeight;
+  tooltip.style.left = (x + w > window.innerWidth  ? x - w - 24 : x) + 'px';
+  tooltip.style.top  = (y + h > window.innerHeight ? y - h - 24 : y) + 'px';
 }
 
 function hideTooltip() {
-  document.getElementById('scoreTooltip').style.display = 'none';
+  tooltip.style.display = 'none';
 }
+
 document.addEventListener('mousemove', e => {
-  const tooltip = document.getElementById('scoreTooltip');
   if (tooltip.style.display !== 'none') positionTooltip(e);
 });
 </script>
