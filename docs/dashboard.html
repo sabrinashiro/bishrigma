@@ -147,6 +147,7 @@
     <div class="tab active" data-pane="geral">visão geral</div>
     <div class="tab" data-pane="pessoas">por pessoa</div>
     <div class="tab" data-pane="graficos">gráficos</div>
+    <div class="tab" data-pane="parametros">parâmetros</div>
   </div>
 
   <!-- VISÃO GERAL -->
@@ -335,6 +336,81 @@
 
     </div>
   </div>
+  <!-- PARÂMETROS -->
+<div class="pane" id="pane-parametros">
+  <div class="section-title" style="margin-bottom:20px">Parâmetros de classificação dos anúncios</div>
+
+  <!-- ROAS -->
+  <div style="margin-bottom:24px">
+    <div style="font-size:13px;font-weight:600;margin-bottom:10px">ROAS</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Classificação</th><th class="r">Valor</th><th>Peso no score</th></tr></thead>
+        <tbody>
+          <tr><td><span class="score-badge score-escalar">excelente</span></td><td class="r">&gt; 5,50</td><td class="r">3 pontos × peso 3,0</td></tr>
+          <tr><td><span class="score-badge score-potencial">bom</span></td><td class="r">5,20 – 5,50</td><td class="r">2 pontos × peso 3,0</td></tr>
+          <tr><td style="color:var(--yellow)">⚠ mediano</td><td class="r">4,50 – 5,20</td><td class="r">1 ponto × peso 3,0</td></tr>
+          <tr><td><span class="score-badge score-pausar">ruim</span></td><td class="r">&lt; 4,50</td><td class="r">0 pontos</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CPA -->
+  <div style="margin-bottom:24px">
+    <div style="font-size:13px;font-weight:600;margin-bottom:10px">CPA</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Classificação</th><th class="r">Valor</th><th>Peso no score</th></tr></thead>
+        <tbody>
+          <tr><td><span class="score-badge score-escalar">excelente</span></td><td class="r">&lt; R$ 26</td><td class="r">3 pontos × peso 2,5</td></tr>
+          <tr><td><span class="score-badge score-potencial">bom</span></td><td class="r">R$ 26 – 28</td><td class="r">2 pontos × peso 2,5</td></tr>
+          <tr><td style="color:var(--yellow)">⚠ mediano</td><td class="r">R$ 28 – 30</td><td class="r">1 ponto × peso 2,5</td></tr>
+          <tr><td><span class="score-badge score-pausar">ruim</span></td><td class="r">&gt; R$ 30</td><td class="r">0 pontos</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- FATOR CRIATIVO -->
+  <div style="margin-bottom:24px">
+    <div style="font-size:13px;font-weight:600;margin-bottom:6px">Fator Criativo <span style="font-size:11px;font-family:var(--mono);color:var(--muted);font-weight:400">(multiplica o score inteiro)</span></div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--muted2);margin-bottom:10px;line-height:1.7">
+      Hook ≥ 28% e Hold ≥ 7,7% → fator <strong>1,0</strong> (sem penalidade)<br>
+      Hook ≥ 28% e Hold &lt; 7,7% → fator <strong>0,8</strong><br>
+      Hook &lt; 28% e Hold ≥ 7,7% → fator <strong>0,7</strong><br>
+      Hook &lt; 28% e Hold &lt; 7,7% → fator <strong>0,5</strong>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Hook rate</th><th>Hold rate</th><th class="r">Fator</th><th>Efeito</th></tr></thead>
+        <tbody>
+          <tr><td>≥ 28%</td><td>≥ 7,7%</td><td class="hi">1,0×</td><td style="font-family:var(--mono);font-size:11px">score integral</td></tr>
+          <tr><td>≥ 28%</td><td>&lt; 7,7%</td><td class="r" style="color:var(--yellow)">0,8×</td><td style="font-family:var(--mono);font-size:11px">−20% no score</td></tr>
+          <tr><td>&lt; 28%</td><td>≥ 7,7%</td><td class="r" style="color:var(--yellow)">0,7×</td><td style="font-family:var(--mono);font-size:11px">−30% no score</td></tr>
+          <tr><td>&lt; 28%</td><td>&lt; 7,7%</td><td class="r" style="color:var(--red)">0,5×</td><td style="font-family:var(--mono);font-size:11px">−50% no score</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CLASSIFICAÇÃO FINAL -->
+  <div style="margin-bottom:24px">
+    <div style="font-size:13px;font-weight:600;margin-bottom:10px">Classificação Final</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Score</th><th>Compras</th><th>Resultado</th><th>Lógica</th></tr></thead>
+        <tbody>
+          <tr><td><span class="score-badge score-escalar">🟢 escalar</span></td><td class="r">≥ 20</td><td class="r">score ≥ 55</td><td style="font-family:var(--mono);font-size:11px;color:var(--muted2)">volume + eficiência confirmados</td></tr>
+          <tr><td><span class="score-badge score-potencial">🟡 potencial</span></td><td class="r">&lt; 20</td><td class="r">score ≥ 55</td><td style="font-family:var(--mono);font-size:11px;color:var(--muted2)">funil funciona, volume insuficiente</td></tr>
+          <tr><td><span class="score-badge score-otimizar">🔵 otimizar criativo</span></td><td class="r">qualquer</td><td class="r">scoreBase ≥ 55, fator ≤ 0,7</td><td style="font-family:var(--mono);font-size:11px;color:var(--muted2)">funil ok, criativo fraco</td></tr>
+          <tr><td><span class="score-badge score-pausar">🔴 pausar</span></td><td class="r">qualquer</td><td class="r">score &lt; 55</td><td style="font-family:var(--mono);font-size:11px;color:var(--muted2)">múltiplas métricas quebradas</td></tr>
+          <tr><td style="color:var(--muted)">—</td><td class="r">&lt; 5</td><td class="r">invest &lt; R$ 80</td><td style="font-family:var(--mono);font-size:11px;color:var(--muted2)">volume insuficiente para classificar</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 </main>
 
 <!-- Config Modal -->
