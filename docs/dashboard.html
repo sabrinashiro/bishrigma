@@ -911,11 +911,7 @@ function renderAds(list) {
     const adIdx = allAds.indexOf(a);
     return `<tr>
       <td>
-    <span class="score-badge ${cls}"
-      onmouseenter="showTooltip(event, allAds[${allAds.indexOf(a)}])"
-      onmouseleave="hideTooltip()">
-      ${label}
-    </span>
+     <span class="score-badge ${cls}" onmouseenter="showTooltip(event,allAds[${allAds.indexOf(a)}])" onmouseleave="hideTooltip()">${label}</span>
   </td>
       <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.name}</td>
       <td style="min-width:200px;max-width:300px;overflow-x:auto;white-space:nowrap;color:var(--muted2);font-size:11px">${a.adset}</td>
