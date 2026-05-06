@@ -1397,8 +1397,6 @@ document.getElementById('metricBtns')?.addEventListener('click', e => {
   `;
 }
 
-const tooltip = document.getElementById('scoreTooltip');
-
 function showTooltip(e, a) {
   const tooltip = document.getElementById('scoreTooltip');
   tooltip.innerHTML = buildTooltip(a);
@@ -1420,10 +1418,6 @@ document.addEventListener('mousemove', e => {
   const tooltip = document.getElementById('scoreTooltip');
   if (tooltip.style.display !== 'none') positionTooltip(e);
 });
-
-function hideTooltip() {
-  tooltip.style.display = 'none';
-}
 </script>
 </body>
 </html>
