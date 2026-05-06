@@ -715,7 +715,7 @@ async function loadAds() {
       a.clicks += +r.clicks || 0;
       a.imp    += +r.impressions || 0;
       a.pur    += +r.purchases || 0;
-      a.vw     += +r.video_watched_actions || 0;
+      a.vw     += +r.video_view || 0;
       a.thru   += +r.video_thruplay_watched_actions || 0;
       a.freq = a.freq || +r.frequency || 0; 
       if (r.outbound_ctr && r.impressions) { a.ctr_num += +r.outbound_ctr * +r.impressions; a.ctr_den += +r.impressions; }
