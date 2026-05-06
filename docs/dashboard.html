@@ -736,6 +736,7 @@ function renderAds(list) {
     const hold = a.imp   ? a.thru/a.imp*100 : 0;
     const cph  = a.vw    ? a.spend/a.vw : 0;
     const copy = [a.c1,a.c2].filter(x => x && COPYS.includes(x)).join(', ') || '—';
+    const design = [a.c1,a.c2].some(x => x && CESAR_VARIANTS.includes(x)) ? 'César' : '—';
     const edit = [a.c1,a.c2].filter(x => x && EDITORAS.includes(x)).join(', ') || '—';
     const { label, cls } = classifyAd(a);
     const adIdx = allAds.indexOf(a);
@@ -749,7 +750,7 @@ function renderAds(list) {
   </td>
       <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.name}</td>
       <td style="min-width:200px;max-width:300px;overflow-x:auto;white-space:nowrap;color:var(--muted2);font-size:11px">${a.adset}</td>
-      <td>${copy}</td><td>${edit}</td>
+      <td>${copy}</td><td>${design}</td> <td>${edit}</td>
       <td class="r">${brl(a.spend)}</td>
       <td class="hi">${num2(roas)}</td>
       <td class="r">${brl(cpa)}</td>
