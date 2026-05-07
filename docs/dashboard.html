@@ -1121,6 +1121,7 @@ function renderParametros() {
       <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
         <span style="cursor:default" onmouseenter="showTooltip(event,allAds[${idx}])" onmouseleave="hideTooltip()">${a.name}</span>
       </td>
+      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted2);font-size:11px">${a.adset}</td>
       <td class="hi">${num2(roas)}</td>
       <td class="r">${brl(cpa)}</td>
       <td class="r">${pct2(hook)}</td>
@@ -1138,13 +1139,14 @@ function renderParametros() {
       <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
         <span style="cursor:default" onmouseenter="showTooltip(event,allAds[${idx}])" onmouseleave="hideTooltip()">${a.name}</span>
       </td>
+      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted2);font-size:11px">${a.adset}</td>
       <td class="hi">${num2(roas)}</td>
       <td class="r">${brl(cpa)}</td>
       <td class="r">${pct2(ctr)}</td>
       <td class="r" style="font-family:var(--mono)">${a.pur||0}</td>
     </tr>`;
   };
-
+  
   ['escalar','potencial','otimizar','pausar'].forEach(g => {
     // Usa o mesmo critério de classifyAd: isImage = hook < 1%
     const videos = groups[g].filter(a => { const h = a.imp ? a.vw/a.imp*100 : 0; return h >= 1; });
