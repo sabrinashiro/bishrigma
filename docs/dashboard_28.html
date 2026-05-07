@@ -112,6 +112,25 @@
   .clear-btn { font-family: var(--mono); font-size: 10px; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border2); background: transparent; color: var(--muted2); cursor: pointer; }
   .clear-btn:hover { color: var(--red); border-color: var(--red); }
   input[type=date]::-webkit-calendar-picker-indicator { cursor: pointer; }
+  .score-badge { display:inline-block; font-size:10px; font-family:var(--mono); padding:3px 10px; border-radius:999px; font-weight:600; white-space:nowrap; }
+  .score-escalar  { background:#dcfce7; color:#15803d; border:1px solid #bbf7d0; }
+  .score-potencial { background:#fef9c3; color:#854d0e; border:1px solid #fde047; }
+  .score-otimizar  { background:#dbeafe; color:#1d4ed8; border:1px solid #bfdbfe; }
+  .score-pausar    { background:#fee2e2; color:#dc2626; border:1px solid #fecaca; }
+
+  .tooltip-popup {
+  position: fixed; z-index: 999;
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 10px; padding: 14px 16px; width: 260px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  font-family: var(--mono); font-size: 11px; line-height: 1.7;
+  pointer-events: none;
+}
+.tooltip-popup .tp-title { font-weight: 600; font-size: 12px; color: var(--text); margin-bottom: 8px; }
+.tooltip-popup .tp-ok  { color: #15803d; }
+.tooltip-popup .tp-bad { color: #dc2626; }
+.tooltip-popup .tp-row { display: flex; justify-content: space-between; gap: 8px; padding: 3px 0; border-bottom: 1px solid var(--border); }
+.tooltip-popup .tp-row:last-child { border-bottom: none; }
 </style>
 </head>
 <body>
@@ -142,6 +161,7 @@
     <div class="tab active" data-pane="geral">visão geral</div>
     <div class="tab" data-pane="pessoas">por pessoa</div>
     <div class="tab" data-pane="graficos">gráficos</div>
+    <div class="tab" data-pane="parametros">parâmetros</div>
   </div>
 
   <!-- VISÃO GERAL -->
@@ -169,7 +189,7 @@
           <span class="champions-badge" id="champions-count"></span>
         </div>
         <div class="champions-criteria">
-          Critério: anúncios <strong>publicados no período selecionado</strong> com <strong>ROAS &gt; 5,5</strong> e <strong>investimento &gt; R$ 1.000</strong>
+          Critério: anúncios <strong>publicados no período selecionado</strong> com <strong>ROAS &gt; 5,2</strong> e <strong>investimento &gt; R$ 1.000</strong>
         </div>
         <div class="loading" id="load-champions"><div class="spinner"></div>carregando...</div>
         <div id="content-champions" style="display:none">
@@ -230,6 +250,7 @@
         <div class="table-wrap">
           <table>
             <thead><tr>
+              <th>Score</th>
               <th>Anúncio</th><th>Adset</th><th>Copy</th><th>Designer</th><th>Editora</th>
               <th class="r">Investimento</th><th class="r">ROAS</th><th class="r">CPA</th>
               <th class="r">CTR</th><th class="r">Hook rate</th><th class="r">Hold rate</th><th class="r">Custo/hook</th>
@@ -329,7 +350,240 @@
 
     </div>
   </div>
-</main>
+  <!-- PARÂMETROS -->
+<div class="pane" id="pane-parametros">
+  <div class="section-title" style="margin-bottom:20px">Parâmetros de classificação dos anúncios</div>
+
+<!-- TABELAS POR SCORE -->
+<div style="margin-bottom:32px">
+  <div class="section-title" style="margin-bottom:16px">Anúncios por classificação</div>
+
+  <div style="margin-bottom:24px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <span class="score-badge score-escalar">🟢 escalar</span>
+      <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">ROAS bom + volume ≥ 20 compras + frequência ok</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:6px;letter-spacing:0.06em">VÍDEOS</div>
+        <div class="table-wrap" style="max-height:220px;overflow-y:auto">
+          <table><thead><tr>
+            <th>Anúncio</th><th class="r">ROAS</th><th class="r">CPA</th><th class="r">Hook</th><th class="r">Hold</th><th class="r">Compras</th>
+          </tr></thead><tbody id="tbody-escalar-video"></tbody></table>
+        </div>
+      </div>
+      <div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:6px;letter-spacing:0.06em">IMAGENS</div>
+        <div class="table-wrap" style="max-height:220px;overflow-y:auto">
+          <table><thead><tr>
+            <th>Anúncio</th><th class="r">ROAS</th><th class="r">CPA</th><th class="r">CTR</th><th class="r">Compras</th>
+          </tr></thead><tbody id="tbody-escalar-img"></tbody></table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:24px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <span class="score-badge score-potencial">🟡 potencial</span>
+      <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">Funil funciona mas volume ainda insuficiente</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:6px;letter-spacing:0.06em">VÍDEOS</div>
+        <div class="table-wrap" style="max-height:220px;overflow-y:auto">
+          <table><thead><tr>
+            <th>Anúncio</th><th class="r">ROAS</th><th class="r">CPA</th><th class="r">Hook</th><th class="r">Hold</th><th class="r">Compras</th>
+          </tr></thead><tbody id="tbody-potencial-video"></tbody></table>
+        </div>
+      </div>
+      <div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:6px;letter-spacing:0.06em">IMAGENS</div>
+        <div class="table-wrap" style="max-height:220px;overflow-y:auto">
+          <table><thead><tr>
+            <th>Anúncio</th><th class="r">ROAS</th><th class="r">CPA</th><th class="r">CTR</th><th class="r">Compras</th>
+          </tr></thead><tbody id="tbody-potencial-img"></tbody></table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:24px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <span class="score-badge score-otimizar">🔵 otimizar criativo</span>
+      <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">Funil de baixo ok — criativo fraco</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:6px;letter-spacing:0.06em">VÍDEOS</div>
+        <div class="table-wrap" style="max-height:220px;overflow-y:auto">
+          <table><thead><tr>
+            <th>Anúncio</th><th class="r">ROAS</th><th class="r">CPA</th><th class="r">Hook</th><th class="r">Hold</th><th class="r">Compras</th>
+          </tr></thead><tbody id="tbody-otimizar-video"></tbody></table>
+        </div>
+      </div>
+      <div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:6px;letter-spacing:0.06em">IMAGENS</div>
+        <div class="table-wrap" style="max-height:220px;overflow-y:auto">
+          <table><thead><tr>
+            <th>Anúncio</th><th class="r">ROAS</th><th class="r">CPA</th><th class="r">CTR</th><th class="r">Compras</th>
+          </tr></thead><tbody id="tbody-otimizar-img"></tbody></table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:32px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <span class="score-badge score-pausar">🔴 pausar</span>
+      <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">Múltiplas métricas quebradas — sem sinal positivo</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:6px;letter-spacing:0.06em">VÍDEOS</div>
+        <div class="table-wrap" style="max-height:220px;overflow-y:auto">
+          <table><thead><tr>
+            <th>Anúncio</th><th class="r">ROAS</th><th class="r">CPA</th><th class="r">Hook</th><th class="r">Hold</th><th class="r">Compras</th>
+          </tr></thead><tbody id="tbody-pausar-video"></tbody></table>
+        </div>
+      </div>
+      <div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:6px;letter-spacing:0.06em">IMAGENS</div>
+        <div class="table-wrap" style="max-height:220px;overflow-y:auto">
+          <table><thead><tr>
+            <th>Anúncio</th><th class="r">ROAS</th><th class="r">CPA</th><th class="r">CTR</th><th class="r">Compras</th>
+          </tr></thead><tbody id="tbody-pausar-img"></tbody></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+<div class="section-title" style="margin-bottom:16px">Parâmetros de classificação</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">
+
+  <!-- ROAS -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px">
+    <div style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:0.08em;margin-bottom:12px">ROAS · peso 3,0</div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="score-badge score-escalar">excelente</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">&gt; 5,50</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="score-badge score-potencial">bom</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">5,20 – 5,50</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-family:var(--mono);font-size:10px;color:var(--yellow)">⚠ mediano</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">4,50 – 5,20</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="score-badge score-pausar">ruim</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">&lt; 4,50</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CPA -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px">
+    <div style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:0.08em;margin-bottom:12px">CPA · peso 2,5</div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="score-badge score-escalar">excelente</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">&lt; R$ 26</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="score-badge score-potencial">bom</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">R$ 26 – 28</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-family:var(--mono);font-size:10px;color:var(--yellow)">⚠ mediano</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">R$ 28 – 30</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="score-badge score-pausar">ruim</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">&gt; R$ 30</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FATOR CRIATIVO + CLASSIFICAÇÃO FINAL lado a lado -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">
+
+  <!-- FATOR CRIATIVO -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px">
+    <div style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:0.08em;margin-bottom:12px">FATOR CRIATIVO · multiplica o score</div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <div style="display:flex;justify-content:space-between">
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">Hook ≥ 28% e Hold ≥ 7,7%</span>
+        <span class="score-badge score-escalar">1,0×</span>
+      </div>
+      <div style="display:flex;justify-content:space-between">
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">Hook ≥ 28% e Hold &lt; 7,7%</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--yellow)">0,8×</span>
+      </div>
+      <div style="display:flex;justify-content:space-between">
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">Hook &lt; 28% e Hold ≥ 7,7%</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--yellow)">0,7×</span>
+      </div>
+      <div style="display:flex;justify-content:space-between">
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">Hook &lt; 28% e Hold &lt; 7,7%</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--red)">0,5×</span>
+      </div>
+      <div style="border-top:1px solid var(--border);margin-top:6px;padding-top:8px">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--muted)">IMAGEM · fator via CTR</div>
+        <div style="display:flex;justify-content:space-between;margin-top:4px">
+          <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">CTR ≥ 1,6%</span>
+          <span class="score-badge score-escalar">1,0×</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:4px">
+          <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">CTR 1,4–1,6%</span>
+          <span style="font-family:var(--mono);font-size:11px;color:var(--yellow)">0,8×</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:4px">
+          <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">CTR 1,2–1,4%</span>
+          <span style="font-family:var(--mono);font-size:11px;color:var(--yellow)">0,7×</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:4px">
+          <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">CTR &lt; 1,2%</span>
+          <span style="font-family:var(--mono);font-size:11px;color:var(--red)">0,5×</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLASSIFICAÇÃO FINAL -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px">
+    <div style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:0.08em;margin-bottom:12px">CLASSIFICAÇÃO FINAL</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="score-badge score-escalar">🟢 escalar</span>
+        <span style="font-family:var(--mono);font-size:10px;color:var(--muted2);text-align:right">score ≥ 55 + ≥ 20 compras</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="score-badge score-potencial">🟡 potencial</span>
+        <span style="font-family:var(--mono);font-size:10px;color:var(--muted2);text-align:right">score ≥ 55 + &lt; 20 compras</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="score-badge score-otimizar">🔵 otimizar</span>
+        <span style="font-family:var(--mono);font-size:10px;color:var(--muted2);text-align:right">scoreBase ≥ 55, fator ≤ 0,7</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="score-badge score-pausar">🔴 pausar</span>
+        <span style="font-family:var(--mono);font-size:10px;color:var(--muted2);text-align:right">score &lt; 55</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">—</span>
+        <span style="font-family:var(--mono);font-size:10px;color:var(--muted2);text-align:right">invest &lt; R$80 e &lt; 5 compras</span>
+      </div>
+    </div>
+  </div>
+
+</div>
 
 <!-- Config Modal -->
 <div class="modal-overlay" id="configModal" onclick="if(event.target===this)closeConfig()">
@@ -345,6 +599,7 @@
     </div>
   </div>
 </div>
+<div class="tooltip-popup" id="scoreTooltip" style="display:none"></div>
 
 <script>
 // ── Configuração ──────────────────────────────────────────────────────────────
@@ -359,6 +614,49 @@ let allAds = [];
 
 // ── Formatação ────────────────────────────────────────────────────────────────
 const brl  = v => v == null ? '—' : 'R$ ' + Number(v).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+function classifyAd(a) {
+  const roas  = a.spend ? a.pv/a.spend : 0;
+  const cpa   = a.pur   ? a.spend/a.pur : 0;
+  const hook  = a.imp   ? a.vw/a.imp*100 : 0;
+  const hold  = a.imp   ? a.thru/a.imp*100 : 0;
+  const freq  = a.freq  || 0;
+  const ctr  = a.ctr_den ? a.ctr_num/a.ctr_den : 0;
+  const imgPattern = /(IMG|IMAGEM|ESTATICO|ESTÁTICO|CARROSSEL)/i;
+  const isImage = imgPattern.test(a.name) || (a.vw === 0 && a.thru === 0 && a.imp >= 200);
+
+  // Sem volume mínimo — não classifica
+  if (a.spend < 80 && a.pur < 5) return { label: '—', cls: '' };
+
+  // Fator criativo multiplica o score final
+  const fatorCriativo = isImage
+    ? (ctr >= 1.6 ? 1.0 : ctr >= 1.4 ? 0.8 : ctr >= 1.2 ? 0.7 : 0.5)
+    : (hook >= 28 && hold >= 7.7 ? 1.0 :
+       hook >= 28 && hold <  7.7 ? 0.8 :
+       hook <  28 && hold >= 7.7 ? 0.7 : 0.5);
+
+  // Score base do funil de baixo (0–100)
+  const scoreBase = (
+    (roas >= 5.5 ? 3 : roas >= 5.2 ? 2 : roas >= 4.5 ? 1 : 0) * 3.0 +
+    (cpa  <= 26  ? 3 : cpa  <= 28  ? 2 : cpa  <= 30  ? 1 : 0) * 2.5
+  ) / 16.5 * 100;
+
+  const score = scoreBase * fatorCriativo;
+
+  // 🟢 Escalar: score alto + volume + frequência ok
+  if (score >= 55 && a.pur >= 20 && freq <= 3.5)
+    return { label: '🟢 escalar', cls: 'score-escalar' };
+
+  // 🟡 Potencial: funil de baixo funciona mas volume baixo
+  if (score >= 55 && a.pur < 20)
+    return { label: '🟡 potencial', cls: 'score-potencial' };
+
+  // 🔵 Otimizar criativo: funil de baixo ok mas criativo fraco
+  if (scoreBase >= 55 && fatorCriativo <= 0.7)
+    return { label: '🔵 otimizar criativo', cls: 'score-otimizar' };
+
+  // 🔴 Pausar
+  return { label: '🔴 pausar', cls: 'score-pausar' };
+}
 const num2 = v => v == null || isNaN(v) ? '—' : Number(v).toFixed(2).replace('.',',');
 const pct2 = v => v == null || isNaN(v) ? '—' : Number(v).toFixed(2).replace('.',',') + '%';
 const fmtd = d => d.split('-').reverse().join('/');
@@ -524,7 +822,7 @@ async function loadChampions() {
 
     const champions = Object.values(map).filter(a => {
       const roas = a.spend ? a.pv/a.spend : 0;
-      return roas > 5.5 && a.spend > 1000;
+      return roas > 5.2 && a.spend > 1000;
     }).sort((a,b) => (b.pv/b.spend) - (a.pv/a.spend));
 
     show('content-champions');
@@ -579,13 +877,15 @@ async function loadAds() {
       a.clicks += +r.clicks || 0;
       a.imp    += +r.impressions || 0;
       a.pur    += +r.purchases || 0;
-      a.vw     += +r.video_watched_actions || 0;
+      a.vw     += +r.video_view || 0;
       a.thru   += +r.video_thruplay_watched_actions || 0;
+      a.freq = a.freq || +r.frequency || 0; 
       if (r.outbound_ctr && r.impressions) { a.ctr_num += +r.outbound_ctr * +r.impressions; a.ctr_den += +r.impressions; }
     });
 
     allAds = Object.values(map).sort((a,b) => b.spend - a.spend);
     renderAds(allAds);
+    if (document.getElementById('tbody-escalar-video')) renderParametros();
     hide('load-ads'); show('content-ads');
   } catch(e) { showErr(e.message); hide('load-ads'); }
 }
@@ -599,11 +899,21 @@ function renderAds(list) {
     const hold = a.imp   ? a.thru/a.imp*100 : 0;
     const cph  = a.vw    ? a.spend/a.vw : 0;
     const copy = [a.c1,a.c2].filter(x => x && COPYS.includes(x)).join(', ') || '—';
+    const design = [a.c1,a.c2].some(x => x && CESAR_VARIANTS.includes(x)) ? 'César' : '—';
     const edit = [a.c1,a.c2].filter(x => x && EDITORAS.includes(x)).join(', ') || '—';
+    const { label, cls } = classifyAd(a);
+    const adIdx = allAds.indexOf(a);
     return `<tr>
+      <td>
+    <span class="score-badge ${cls}"
+      onmouseenter="showTooltip(event, allAds[${allAds.indexOf(a)}])"
+      onmouseleave="hideTooltip()">
+      ${label}
+    </span>
+  </td>
       <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.name}</td>
-      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted2);font-size:11px">${a.adset}</td>
-      <td>${copy}</td><td>${edit}</td>
+      <td style="min-width:200px;max-width:300px;overflow-x:auto;white-space:nowrap;color:var(--muted2);font-size:11px">${a.adset}</td>
+      <td>${copy}</td><td>${design}</td> <td>${edit}</td>
       <td class="r">${brl(a.spend)}</td>
       <td class="hi">${num2(roas)}</td>
       <td class="r">${brl(cpa)}</td>
@@ -718,6 +1028,62 @@ function show(id) { document.getElementById(id).style.display = id.startsWith('l
 function hide(id) { document.getElementById(id).style.display = 'none'; }
 function set(id, val) { document.getElementById(id).textContent = val; }
 
+function renderParametros() {
+  if (!allAds.length) return;
+  const imgPattern = /(IMG|IMAGEM|ESTATICO|ESTÁTICO|CARROSSEL)/i;
+  const groups = { escalar: [], potencial: [], otimizar: [], pausar: [] };
+  allAds.forEach(a => {
+    const { cls } = classifyAd(a);
+    if (cls === 'score-escalar')   groups.escalar.push(a);
+    if (cls === 'score-potencial') groups.potencial.push(a);
+    if (cls === 'score-otimizar')  groups.otimizar.push(a);
+    if (cls === 'score-pausar')    groups.pausar.push(a);
+  });
+
+  const emptyRow = cols => `<tr><td colspan="${cols}" style="color:var(--muted);font-family:var(--mono);font-size:11px;text-align:center;padding:14px">Nenhum anúncio</td></tr>`;
+
+  const videoRow = a => {
+    const roas = a.spend ? a.pv/a.spend : 0;
+    const cpa  = a.pur   ? a.spend/a.pur : 0;
+    const hook = a.imp   ? a.vw/a.imp*100 : 0;
+    const hold = a.imp   ? a.thru/a.imp*100 : 0;
+    const idx  = allAds.indexOf(a);
+    return `<tr>
+      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+        <span style="cursor:default" onmouseenter="showTooltip(event,allAds[${idx}])" onmouseleave="hideTooltip()">${a.name}</span>
+      </td>
+      <td class="hi">${num2(roas)}</td>
+      <td class="r">${brl(cpa)}</td>
+      <td class="r">${pct2(hook)}</td>
+      <td class="r">${pct2(hold)}</td>
+      <td class="r" style="font-family:var(--mono)">${a.pur||0}</td>
+    </tr>`;
+  };
+
+  const imgRow = a => {
+    const roas = a.spend ? a.pv/a.spend : 0;
+    const cpa  = a.pur   ? a.spend/a.pur : 0;
+    const ctr  = a.ctr_den ? a.ctr_num/a.ctr_den : 0;
+    const idx  = allAds.indexOf(a);
+    return `<tr>
+      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+        <span style="cursor:default" onmouseenter="showTooltip(event,allAds[${idx}])" onmouseleave="hideTooltip()">${a.name}</span>
+      </td>
+      <td class="hi">${num2(roas)}</td>
+      <td class="r">${brl(cpa)}</td>
+      <td class="r">${pct2(ctr)}</td>
+      <td class="r" style="font-family:var(--mono)">${a.pur||0}</td>
+    </tr>`;
+  };
+
+  ['escalar','potencial','otimizar','pausar'].forEach(g => {
+    const videos = groups[g].filter(a => !imgPattern.test(a.name) && !(a.vw === 0 && a.thru === 0 && a.imp >= 200));
+    const imgs   = groups[g].filter(a =>  imgPattern.test(a.name) ||  (a.vw === 0 && a.thru === 0 && a.imp >= 200));
+    document.getElementById(`tbody-${g}-video`).innerHTML = videos.length ? videos.map(videoRow).join('') : emptyRow(6);
+    document.getElementById(`tbody-${g}-img`).innerHTML   = imgs.length   ? imgs.map(imgRow).join('')     : emptyRow(5);
+  });
+}
+
 function switchTab(pane, el) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
@@ -725,6 +1091,7 @@ function switchTab(pane, el) {
   document.getElementById('pane-'+pane).classList.add('active');
   if (pane === 'pessoas') loadPessoas();
   if (pane === 'graficos') loadGraficos();
+  if (pane === 'parametros') renderParametros();
 }
 
 function loadAll() {
@@ -962,6 +1329,92 @@ document.getElementById('metricBtns')?.addEventListener('click', e => {
   currentMetric = btn.dataset.metric;
   if (temporalData.length) buildTemporal(currentMetric);
 });
+  function buildTooltip(a) {
+  const hook = a.imp ? a.vw/a.imp*100 : 0;
+  const hold = a.imp ? a.thru/a.imp*100 : 0;
+  const roas = a.spend ? a.pv/a.spend : 0;
+  const cpa  = a.pur  ? a.spend/a.pur : 0;
+  const ctr  = a.ctr_den ? a.ctr_num/a.ctr_den : 0;
+  const imgPattern = /(IMG|IMAGEM|ESTATICO|ESTÁTICO|CARROSSEL)/i;
+  const isImage = imgPattern.test(a.name) || (a.vw === 0 && a.thru === 0 && a.imp >= 200);
+
+  const row = (label, val, ok, fmt) =>
+    `<div class="tp-row">
+      <span>${label}</span>
+      <span class="${ok ? 'tp-ok' : 'tp-bad'}">${ok ? '✓' : '✗'} ${fmt(val)}</span>
+    </div>`;
+
+  const rows = isImage
+    ? `${row('CTR',  ctr,  ctr  >= 1.6, v => v.toFixed(2)+'%')}
+       ${row('CPC',  a.clicks ? a.spend/a.clicks : 0, true, v => 'R$ '+v.toFixed(2))}
+       ${row('ROAS', roas, roas >= 5.2, v => v.toFixed(2))}
+       ${row('CPA',  cpa,  cpa  <= 28,  v => 'R$ '+v.toFixed(2))}`
+    : `${row('Hook rate', hook, hook >= 28, v => v.toFixed(1)+'%')}
+       ${row('Hold rate', hold, hold >= 7.7, v => v.toFixed(1)+'%')}
+       ${row('CTR',       ctr,  ctr  >= 1.6, v => v.toFixed(2)+'%')}
+       ${row('ROAS',      roas, roas >= 5.2, v => v.toFixed(2))}
+       ${row('CPA',       cpa,  cpa  <= 28,  v => 'R$ '+v.toFixed(2))}`;
+
+  let comment = '';
+  if (isImage) {
+    if (ctr < 1.2)
+      comment = 'CTR crítico — o criativo não tá gerando cliques. Testar nova imagem ou headline.';
+    else if (ctr < 1.6)
+      comment = 'CTR mediano. A imagem chama atenção mas tem espaço pra melhorar headline ou contexto visual.';
+    else if (roas < 4.5)
+      comment = 'CTR ok mas o funil quebra depois do clique. Verificar página, oferta e preço.';
+    else if (cpa > 30)
+      comment = 'Imagem funciona mas CPA alto. Testar upsell ou frete grátis pra melhorar margem.';
+    else
+      comment = 'Imagem performando bem. Validar volume antes de escalar.';
+  } else {
+    if (hook < 28 && hold < 7.7 && roas >= 5.2)
+      comment = 'O produto vende mas o vídeo não tá chegando em ninguém. Regravar com abertura mais forte e corpo que segure.';
+    else if (hook >= 28 && hold < 7.7)
+      comment = 'A abertura para as pessoas mas o vídeo perde elas logo depois. Problema de edição, ritmo ou narrativa.';
+    else if (hook < 28 && hold >= 7.7)
+      comment = 'Quem assiste compra — mas poucos estão parando. Focar numa abertura mais disruptiva.';
+    else if (hook >= 28 && hold >= 7.7 && roas < 4.5)
+      comment = 'Criativo sólido mas o funil quebra depois do clique. Verificar página, oferta e preço.';
+    else if (hook >= 28 && hold >= 7.7 && cpa > 30)
+      comment = 'Criativo ok mas tá caro pra converter. Testar upsell, kit ou frete grátis pra melhorar CPA.';
+    else if (hook >= 28 && hold >= 7.7 && roas >= 5.2)
+      comment = 'Criativo funcionando. Validar volume por pelo menos 7 dias antes de escalar orçamento.';
+    else
+      comment = 'Dados ainda insuficientes pra diagnóstico preciso. Aguardar mais volume.';
+  }
+
+  return `
+    <div class="tp-title">diagnóstico — ${isImage ? 'imagem' : 'vídeo'}</div>
+    ${rows}
+    <div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border);color:var(--muted2);line-height:1.6">${comment}</div>
+  `;
+}
+
+const tooltip = document.getElementById('scoreTooltip');
+
+function showTooltip(e, a) {
+  tooltip.innerHTML = buildTooltip(a);
+  tooltip.style.display = 'block';
+  positionTooltip(e);
+}
+
+function positionTooltip(e) {
+  const x = e.clientX + 12;
+  const y = e.clientY + 12;
+  const w = tooltip.offsetWidth;
+  const h = tooltip.offsetHeight;
+  tooltip.style.left = (x + w > window.innerWidth  ? x - w - 24 : x) + 'px';
+  tooltip.style.top  = (y + h > window.innerHeight ? y - h - 24 : y) + 'px';
+}
+
+document.addEventListener('mousemove', e => {
+  if (tooltip.style.display !== 'none') positionTooltip(e);
+});
+
+function hideTooltip() {
+  tooltip.style.display = 'none';
+}
 </script>
 </body>
 </html>
