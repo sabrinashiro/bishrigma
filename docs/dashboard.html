@@ -352,7 +352,9 @@
 
     </div>
   </div>
+
   <!-- PARÂMETROS -->
+  <!-- ALTERAÇÃO 3: aba de parâmetros atualizada com benchmarks reais -->
 <div class="pane" id="pane-parametros">
   <div class="section-title" style="margin-bottom:20px">Parâmetros de classificação dos anúncios</div>
 
@@ -460,53 +462,99 @@
     </div>
   </div>
 </div>
-  
+
 <div class="section-title" style="margin-bottom:16px">Parâmetros de classificação</div>
 
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">
 
-  <!-- ROAS -->
+  <!-- ROAS VÍDEO -->
   <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px">
-    <div style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:0.08em;margin-bottom:12px">ROAS · peso 3,0</div>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:0.08em;margin-bottom:12px">ROAS · VÍDEO · peso 3,0</div>
     <div style="display:flex;flex-direction:column;gap:6px">
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <span class="score-badge score-escalar">excelente</span>
-        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">&gt; 5,50</span>
+        <span class="score-badge score-escalar">acima da média</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">&gt; 5,07</span>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <span class="score-badge score-potencial">bom</span>
-        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">5,20 – 5,50</span>
+        <span class="score-badge score-potencial">baseline</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">4,83</span>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <span style="font-family:var(--mono);font-size:10px;color:var(--yellow)">⚠ mediano</span>
-        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">4,50 – 5,20</span>
+        <span style="font-family:var(--mono);font-size:10px;color:var(--yellow)">⚠ abaixo</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">4,59 – 4,83</span>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center">
         <span class="score-badge score-pausar">ruim</span>
-        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">&lt; 4,50</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">&lt; 4,59</span>
       </div>
     </div>
   </div>
 
-  <!-- CPA -->
+  <!-- ROAS IMAGEM -->
   <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px">
-    <div style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:0.08em;margin-bottom:12px">CPA · peso 2,5</div>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:0.08em;margin-bottom:12px">ROAS · IMAGEM · peso 3,0</div>
     <div style="display:flex;flex-direction:column;gap:6px">
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <span class="score-badge score-escalar">excelente</span>
-        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">&lt; R$ 26</span>
+        <span class="score-badge score-escalar">acima da média</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">&gt; 5,94</span>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <span class="score-badge score-potencial">bom</span>
-        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">R$ 26 – 28</span>
+        <span class="score-badge score-potencial">baseline</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">5,66</span>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <span style="font-family:var(--mono);font-size:10px;color:var(--yellow)">⚠ mediano</span>
-        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">R$ 28 – 30</span>
+        <span style="font-family:var(--mono);font-size:10px;color:var(--yellow)">⚠ abaixo</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">5,37 – 5,66</span>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center">
         <span class="score-badge score-pausar">ruim</span>
-        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">&gt; R$ 30</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">&lt; 5,37</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CPA VÍDEO -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px">
+    <div style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:0.08em;margin-bottom:12px">CPA · VÍDEO · peso 2,5</div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="score-badge score-escalar">acima da média</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">&lt; R$ 29,98</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="score-badge score-potencial">baseline</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">R$ 31,56</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-family:var(--mono);font-size:10px;color:var(--yellow)">⚠ abaixo</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">R$ 31,56 – 33,14</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="score-badge score-pausar">ruim</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">&gt; R$ 33,14</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CPA IMAGEM -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px">
+    <div style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:0.08em;margin-bottom:12px">CPA · IMAGEM · peso 2,5</div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="score-badge score-escalar">acima da média</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">&lt; R$ 27,11</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="score-badge score-potencial">baseline</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">R$ 28,53</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-family:var(--mono);font-size:10px;color:var(--yellow)">⚠ abaixo</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">R$ 28,53 – 29,96</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="score-badge score-pausar">ruim</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">&gt; R$ 29,96</span>
       </div>
     </div>
   </div>
@@ -520,38 +568,39 @@
   <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px">
     <div style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:0.08em;margin-bottom:12px">FATOR CRIATIVO · multiplica o score</div>
     <div style="display:flex;flex-direction:column;gap:6px">
+      <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:2px">VÍDEO (hook ≥ 1%) · baseline hook 39,33% · hold 11,01%</div>
       <div style="display:flex;justify-content:space-between">
-        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">Hook ≥ 28% e Hold ≥ 7,7%</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">Hook ≥ 41,29% e Hold ≥ 11,56%</span>
         <span class="score-badge score-escalar">1,0×</span>
       </div>
       <div style="display:flex;justify-content:space-between">
-        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">Hook ≥ 28% e Hold &lt; 7,7%</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">Hook ≥ 41,29% e Hold &lt; 11,56%</span>
         <span style="font-family:var(--mono);font-size:11px;color:var(--yellow)">0,8×</span>
       </div>
       <div style="display:flex;justify-content:space-between">
-        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">Hook &lt; 28% e Hold ≥ 7,7%</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">Hook &lt; 41,29% e Hold ≥ 11,56%</span>
         <span style="font-family:var(--mono);font-size:11px;color:var(--yellow)">0,7×</span>
       </div>
       <div style="display:flex;justify-content:space-between">
-        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">Hook &lt; 28% e Hold &lt; 7,7%</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">Hook &lt; 41,29% e Hold &lt; 11,56%</span>
         <span style="font-family:var(--mono);font-size:11px;color:var(--red)">0,5×</span>
       </div>
       <div style="border-top:1px solid var(--border);margin-top:6px;padding-top:8px">
-        <div style="font-family:var(--mono);font-size:10px;color:var(--muted)">IMAGEM · fator via CTR</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:4px">IMAGEM (hook &lt; 1%) · baseline CTR 1,28%</div>
         <div style="display:flex;justify-content:space-between;margin-top:4px">
-          <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">CTR ≥ 1,6%</span>
+          <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">CTR ≥ 1,34%</span>
           <span class="score-badge score-escalar">1,0×</span>
         </div>
         <div style="display:flex;justify-content:space-between;margin-top:4px">
-          <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">CTR 1,4–1,6%</span>
+          <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">CTR 1,21–1,34%</span>
           <span style="font-family:var(--mono);font-size:11px;color:var(--yellow)">0,8×</span>
         </div>
         <div style="display:flex;justify-content:space-between;margin-top:4px">
-          <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">CTR 1,2–1,4%</span>
+          <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">CTR 1,09–1,21%</span>
           <span style="font-family:var(--mono);font-size:11px;color:var(--yellow)">0,7×</span>
         </div>
         <div style="display:flex;justify-content:space-between;margin-top:4px">
-          <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">CTR &lt; 1,2%</span>
+          <span style="font-family:var(--mono);font-size:11px;color:var(--muted2)">CTR &lt; 1,09%</span>
           <span style="font-family:var(--mono);font-size:11px;color:var(--red)">0,5×</span>
         </div>
       </div>
@@ -583,11 +632,18 @@
         <span style="font-family:var(--mono);font-size:10px;color:var(--muted2);text-align:right">invest &lt; R$80 e &lt; 5 compras</span>
       </div>
     </div>
+    <div style="border-top:1px solid var(--border);margin-top:12px;padding-top:10px">
+      <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:6px">CRITÉRIO DE TIPO</div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--muted2);line-height:1.8">
+        VÍDEO → hook rate ≥ 1%<br>
+        IMAGEM → hook rate &lt; 1% ou ausente
+      </div>
+    </div>
   </div>
 
 </div>
 </div>
-  
+
 <!-- Config Modal -->
 <div class="modal-overlay" id="configModal" onclick="if(event.target===this)closeConfig()">
   <div class="modal">
@@ -617,31 +673,47 @@ let allAds = [];
 
 // ── Formatação ────────────────────────────────────────────────────────────────
 const brl  = v => v == null ? '—' : 'R$ ' + Number(v).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+// ALTERAÇÃO 1: classifyAd com benchmarks reais e critério de tipo por hook < 1%
 function classifyAd(a) {
   const roas  = a.spend ? a.pv/a.spend : 0;
   const cpa   = a.pur   ? a.spend/a.pur : 0;
   const hook  = a.imp   ? a.vw/a.imp*100 : 0;
   const hold  = a.imp   ? a.thru/a.imp*100 : 0;
   const freq  = a.freq  || 0;
-  const ctr  = a.ctr_den ? a.ctr_num/a.ctr_den : 0;
-  const imgPattern = /(IMG|IMAGEM|ESTATICO|ESTÁTICO|CARROSSEL)/i;
-  const isImage = imgPattern.test(a.name) || (a.vw === 0 && a.thru === 0 && a.imp >= 200);
+  const ctr   = a.ctr_den ? a.ctr_num/a.ctr_den : 0;
+
+  // Critério de tipo: imagem = hook < 1% ou ausente (vw=0 e thru=0)
+  const isImage = hook < 1;
 
   // Sem volume mínimo — não classifica
   if (a.spend < 80 && a.pur < 5) return { label: '—', cls: '' };
 
+  // Benchmarks reais do Aristocrata (período 01/02/2026–07/05/2026)
+  // VÍDEO: hook baseline 39,33% · hold baseline 11,01%
+  // IMAGEM: CTR baseline 1,28%
   // Fator criativo multiplica o score final
   const fatorCriativo = isImage
-    ? (ctr >= 1.6 ? 1.0 : ctr >= 1.4 ? 0.8 : ctr >= 1.2 ? 0.7 : 0.5)
-    : (hook >= 28 && hold >= 7.7 ? 1.0 :
-       hook >= 28 && hold <  7.7 ? 0.8 :
-       hook <  28 && hold >= 7.7 ? 0.7 : 0.5);
+    ? (ctr >= 1.34 ? 1.0 : ctr >= 1.21 ? 0.8 : ctr >= 1.09 ? 0.7 : 0.5)
+    : (hook >= 41.29 && hold >= 11.56 ? 1.0 :
+       hook >= 41.29 && hold <  11.56 ? 0.8 :
+       hook <  41.29 && hold >= 11.56 ? 0.7 : 0.5);
 
-  // Score base do funil de baixo (0–100)
-  const scoreBase = (
-    (roas >= 5.5 ? 3 : roas >= 5.2 ? 2 : roas >= 4.5 ? 1 : 0) * 3.0 +
-    (cpa  <= 26  ? 3 : cpa  <= 28  ? 2 : cpa  <= 30  ? 1 : 0) * 2.5
-  ) / 16.5 * 100;
+  // Score base do funil de baixo (0–100), thresholds separados por tipo
+  let scoreBase;
+  if (isImage) {
+    // IMAGEM: ROAS baseline 5,66 · CPA baseline 28,53
+    scoreBase = (
+      (roas >= 5.94 ? 3 : roas >= 5.66 ? 2 : roas >= 5.37 ? 1 : 0) * 3.0 +
+      (cpa  <= 27.11 ? 3 : cpa  <= 28.53 ? 2 : cpa  <= 29.96 ? 1 : 0) * 2.5
+    ) / 16.5 * 100;
+  } else {
+    // VÍDEO: ROAS baseline 4,83 · CPA baseline 31,56
+    scoreBase = (
+      (roas >= 5.07 ? 3 : roas >= 4.83 ? 2 : roas >= 4.59 ? 1 : 0) * 3.0 +
+      (cpa  <= 29.98 ? 3 : cpa  <= 31.56 ? 2 : cpa  <= 33.14 ? 1 : 0) * 2.5
+    ) / 16.5 * 100;
+  }
 
   const score = scoreBase * fatorCriativo;
 
@@ -660,6 +732,7 @@ function classifyAd(a) {
   // 🔴 Pausar
   return { label: '🔴 pausar', cls: 'score-pausar' };
 }
+
 const num2 = v => v == null || isNaN(v) ? '—' : Number(v).toFixed(2).replace('.',',');
 const pct2 = v => v == null || isNaN(v) ? '—' : Number(v).toFixed(2).replace('.',',') + '%';
 const fmtd = d => d.split('-').reverse().join('/');
@@ -741,7 +814,6 @@ async function loadGeral() {
     ]);
     if (!rows) return;
 
-    // Acumula brutos
     let spend=0, pv=0, imp=0, clicks=0, pur=0, vw=0, thru=0, ctr_num=0, ctr_den=0, atc=0;
     rows.forEach(r => {
       spend  += +r.spend  || 0;
@@ -756,13 +828,11 @@ async function loadGeral() {
       atc    += +r.add_to_cart || 0;
     });
 
-    // Frequência conta: média ponderada por impressões
     let fq_num=0, fq_den=0;
     (freqRows || []).forEach(r => {
       if (r.frequency && r.impressions) { fq_num += +r.frequency * +r.impressions; fq_den += +r.impressions; }
     });
 
-    // Métricas
     const roas = spend ? pv/spend : 0;
     const cpa  = pur   ? spend/pur : 0;
     const ctr  = ctr_den ? ctr_num/ctr_den : 0;
@@ -785,11 +855,9 @@ async function loadGeral() {
     set('v-pur',   pur);
     set('v-cph',   brl(cph));
 
-    // % invest. em criativos do período
-    // Soma o spend das linhas cujo ad_created_time cai dentro de FROM→TO
     const spendPeriod = (adsRows || []).reduce((sum, r) => {
       if (!r.ad_created_time) return sum;
-      const created = r.ad_created_time.split('T')[0]; // descarta hora se vier como datetime
+      const created = r.ad_created_time.split('T')[0];
       if (created >= FROM && created <= TO) return sum + (+r.spend || 0);
       return sum;
     }, 0);
@@ -909,7 +977,6 @@ function renderAds(list) {
     const design = [a.c1,a.c2].some(x => x && CESAR_VARIANTS.includes(x)) ? 'César' : '—';
     const edit = [a.c1,a.c2].filter(x => x && EDITORAS.includes(x)).join(', ') || '—';
     const { label, cls } = classifyAd(a);
-    const adIdx = allAds.indexOf(a);
     return `<tr>
       <td>
      <span class="score-badge ${cls}" onmouseenter="showTooltip(event,allAds[${allAds.indexOf(a)}])" onmouseleave="hideTooltip()">${label}</span>
@@ -1033,7 +1100,6 @@ function set(id, val) { document.getElementById(id).textContent = val; }
 
 function renderParametros() {
   if (!allAds.length) return;
-  const imgPattern = /(IMG|IMAGEM|ESTATICO|ESTÁTICO|CARROSSEL)/i;
   const groups = { escalar: [], potencial: [], otimizar: [], pausar: [] };
   allAds.forEach(a => {
     const { cls } = classifyAd(a);
@@ -1080,8 +1146,9 @@ function renderParametros() {
   };
 
   ['escalar','potencial','otimizar','pausar'].forEach(g => {
-    const videos = groups[g].filter(a => !imgPattern.test(a.name) && !(a.vw === 0 && a.thru === 0 && a.imp >= 200));
-    const imgs   = groups[g].filter(a =>  imgPattern.test(a.name) ||  (a.vw === 0 && a.thru === 0 && a.imp >= 200));
+    // Usa o mesmo critério de classifyAd: isImage = hook < 1%
+    const videos = groups[g].filter(a => { const h = a.imp ? a.vw/a.imp*100 : 0; return h >= 1; });
+    const imgs   = groups[g].filter(a => { const h = a.imp ? a.vw/a.imp*100 : 0; return h < 1; });
     document.getElementById(`tbody-${g}-video`).innerHTML = videos.length ? videos.map(videoRow).join('') : emptyRow(6);
     document.getElementById(`tbody-${g}-img`).innerHTML   = imgs.length   ? imgs.map(imgRow).join('')     : emptyRow(5);
   });
@@ -1332,44 +1399,49 @@ document.getElementById('metricBtns')?.addEventListener('click', e => {
   currentMetric = btn.dataset.metric;
   if (temporalData.length) buildTemporal(currentMetric);
 });
+
 const tooltip = document.getElementById('scoreTooltip');
 
+// ALTERAÇÃO 2: buildTooltip com thresholds dos benchmarks reais
 function buildTooltip(a) {
   const hook = a.imp ? a.vw/a.imp*100 : 0;
   const hold = a.imp ? a.thru/a.imp*100 : 0;
   const roas = a.spend ? a.pv/a.spend : 0;
   const cpa  = a.pur  ? a.spend/a.pur : 0;
   const ctr  = a.ctr_den ? a.ctr_num/a.ctr_den : 0;
-  const imgPattern = /(IMG|IMAGEM|ESTATICO|ESTÁTICO|CARROSSEL)/i;
-  const isImage = imgPattern.test(a.name) || (a.vw === 0 && a.thru === 0 && a.imp >= 200);
+  const isImage = hook < 1;
+
   const row = (label, val, ok, fmt) =>
     `<div class="tp-row"><span>${label}</span><span class="${ok?'tp-ok':'tp-bad'}">${ok?'✓':'✗'} ${fmt(val)}</span></div>`;
+
   const rows = isImage
-    ? `${row('CTR',  ctr,  ctr  >= 1.6, v => v.toFixed(2)+'%')}
+    ? `${row('CTR',  ctr,  ctr  >= 1.28, v => v.toFixed(2)+'%')}
        ${row('CPC',  a.clicks ? a.spend/a.clicks : 0, true, v => 'R$ '+v.toFixed(2))}
-       ${row('ROAS', roas, roas >= 5.2, v => v.toFixed(2))}
-       ${row('CPA',  cpa,  cpa  <= 28,  v => 'R$ '+v.toFixed(2))}`
-    : `${row('Hook rate', hook, hook >= 28, v => v.toFixed(1)+'%')}
-       ${row('Hold rate', hold, hold >= 7.7, v => v.toFixed(1)+'%')}
-       ${row('CTR',       ctr,  ctr  >= 1.6, v => v.toFixed(2)+'%')}
-       ${row('ROAS',      roas, roas >= 5.2, v => v.toFixed(2))}
-       ${row('CPA',       cpa,  cpa  <= 28,  v => 'R$ '+v.toFixed(2))}`;
+       ${row('ROAS', roas, roas >= 5.66, v => v.toFixed(2))}
+       ${row('CPA',  cpa,  cpa  <= 28.53, v => 'R$ '+v.toFixed(2))}`
+    : `${row('Hook rate', hook, hook >= 39.33, v => v.toFixed(1)+'%')}
+       ${row('Hold rate', hold, hold >= 11.01, v => v.toFixed(1)+'%')}
+       ${row('CTR',       ctr,  ctr  >= 1.92,  v => v.toFixed(2)+'%')}
+       ${row('ROAS',      roas, roas >= 4.83,  v => v.toFixed(2))}
+       ${row('CPA',       cpa,  cpa  <= 31.56, v => 'R$ '+v.toFixed(2))}`;
+
   let comment = '';
   if (isImage) {
-    if (ctr < 1.2) comment = 'CTR crítico — o criativo não tá gerando cliques. Testar nova imagem ou headline.';
-    else if (ctr < 1.6) comment = 'CTR mediano. A imagem chama atenção mas tem espaço pra melhorar headline ou contexto visual.';
-    else if (roas < 4.5) comment = 'CTR ok mas o funil quebra depois do clique. Verificar página, oferta e preço.';
-    else if (cpa > 30) comment = 'Imagem funciona mas CPA alto. Testar upsell ou frete grátis pra melhorar margem.';
-    else comment = 'Imagem performando bem. Validar volume antes de escalar.';
+    if (ctr < 1.21)       comment = 'CTR crítico — o criativo não tá gerando cliques. Testar nova imagem ou headline.';
+    else if (ctr < 1.34)  comment = 'CTR abaixo do baseline. A imagem chama atenção mas tem espaço pra melhorar headline ou contexto visual.';
+    else if (roas < 5.37) comment = 'CTR ok mas o funil quebra depois do clique. Verificar página, oferta e preço.';
+    else if (cpa > 29.96) comment = 'Imagem funciona mas CPA alto. Testar upsell ou frete grátis pra melhorar margem.';
+    else                  comment = 'Imagem performando bem. Validar volume antes de escalar.';
   } else {
-    if (hook < 28 && hold < 7.7 && roas >= 5.2) comment = 'O produto vende mas o vídeo não tá chegando em ninguém. Regravar com abertura mais forte e corpo que segure.';
-    else if (hook >= 28 && hold < 7.7) comment = 'A abertura para as pessoas mas o vídeo perde elas logo depois. Problema de edição, ritmo ou narrativa.';
-    else if (hook < 28 && hold >= 7.7) comment = 'Quem assiste compra — mas poucos estão parando. Focar numa abertura mais disruptiva.';
-    else if (hook >= 28 && hold >= 7.7 && roas < 4.5) comment = 'Criativo sólido mas o funil quebra depois do clique. Verificar página, oferta e preço.';
-    else if (hook >= 28 && hold >= 7.7 && cpa > 30) comment = 'Criativo ok mas tá caro pra converter. Testar upsell, kit ou frete grátis pra melhorar CPA.';
-    else if (hook >= 28 && hold >= 7.7 && roas >= 5.2) comment = 'Criativo funcionando. Validar volume por pelo menos 7 dias antes de escalar orçamento.';
+    if (hook < 37.36 && hold < 10.46 && roas >= 4.83) comment = 'O produto vende mas o vídeo não tá chegando em ninguém. Regravar com abertura mais forte e corpo que segure.';
+    else if (hook >= 37.36 && hold < 10.46)            comment = 'A abertura para as pessoas mas o vídeo perde elas logo depois. Problema de edição, ritmo ou narrativa.';
+    else if (hook < 37.36 && hold >= 10.46)            comment = 'Quem assiste compra — mas poucos estão parando. Focar numa abertura mais disruptiva.';
+    else if (hook >= 37.36 && hold >= 10.46 && roas < 4.59) comment = 'Criativo sólido mas o funil quebra depois do clique. Verificar página, oferta e preço.';
+    else if (hook >= 37.36 && hold >= 10.46 && cpa > 33.14) comment = 'Criativo ok mas tá caro pra converter. Testar upsell, kit ou frete grátis pra melhorar CPA.';
+    else if (hook >= 37.36 && hold >= 10.46 && roas >= 4.83) comment = 'Criativo funcionando. Validar volume por pelo menos 7 dias antes de escalar orçamento.';
     else comment = 'Dados ainda insuficientes pra diagnóstico preciso. Aguardar mais volume.';
   }
+
   return `
     <div class="tp-title">diagnóstico — ${isImage ? 'imagem' : 'vídeo'}</div>
     ${rows}
