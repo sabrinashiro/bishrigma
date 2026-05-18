@@ -1038,7 +1038,7 @@ async function loadPessoas() {
   show('load-pessoas'); hide('content-pessoas');
   try {
     const rows = await sbFetch('meta_pessoa_totals',
-      'creator_1,creator_2,spend,purchase_value,clicks,impressions,purchases,video_view,video_thruplay_watched_actions,outbound_ctr_weighted,impressions_for_ctr'
+      'creator_1,creator_2,spend,purchase_value,clicks,impressions,purchases,video_view,video_thruplay_watched_actions,outbound_ctr_weighted,impressions_for_ctr,add_to_cart'
     );
     if (!rows) return;
 
