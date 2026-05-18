@@ -856,7 +856,8 @@ async function loadGeral() {
     set('v-pur',   pur);
     set('v-cph',   brl(cph));
 
-    const atcClk = clicks ? atc/clicks*100 : 0;
+    const outboundClicks = imp > 0 ? (ctr_num / ctr_den) / 100 * imp : 0;
+    const atcClk = outboundClicks ? atc/outboundClicks*100 : 0;
     set('v-atc', pct2(atcClk));
     const spendPeriod = (adsRows || []).reduce((sum, r) => {
       if (!r.ad_created_time) return sum;
@@ -1080,7 +1081,8 @@ async function loadPessoas() {
       const d = p[n];
       const roas   = d.spend  ? d.pv/d.spend : 0;
       const ctr    = d.ctr_den ? d.ctr_num/d.ctr_den : 0;
-      const atcClk = d.clicks ? d.atc/d.clicks : 0;
+      const outboundClicks = d.ctr_den > 0 ? (d.ctr_num / d.ctr_den) / 100 * d.imp : 0;
+      const atcClk = outboundClicks ? d.atc/outboundClicks : 0;
       return `<tr><td style="font-weight:500">${n}</td><td class="r">${brl(d.spend)}</td><td class="hi">${num2(roas)}</td><td class="r">${pct2(ctr)}</td><td class="r">${pct2(atcClk*100)}</td></tr>`;
     }).join('');
 
