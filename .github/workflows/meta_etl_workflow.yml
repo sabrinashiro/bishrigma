@@ -7,6 +7,8 @@
 name: Meta Ads ETL
 
 on:
+  schedule:
+    - cron: '0 6 * * *'   # diário 06h UTC = 03h Brasília
   workflow_dispatch:
     inputs:
       days_back:
