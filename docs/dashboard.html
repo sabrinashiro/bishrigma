@@ -182,6 +182,7 @@
       <div class="card sm"><div class="lbl">Hold rate</div><div class="val" id="v-hold">—</div></div>
       <div class="card sm"><div class="lbl">Resultados</div><div class="val" id="v-pur">—</div></div>
       <div class="card sm"><div class="lbl">Custo/hook</div><div class="val" id="v-cph">—</div></div>
+      <div class="card sm"><div class="lbl">ATC/clique</div><div class="val" id="v-atc">—</div></div>
       <div class="card sm" style="grid-column:span 2"><div class="lbl">% Invest. em criativos do período</div><div class="val" id="v-pct-period">—</div></div>
     </div>
 
@@ -808,7 +809,7 @@ async function loadGeral() {
   show('load-geral'); hide('content-geral');
   try {
     const [rows, freqRows, adsRows] = await Promise.all([
-      sbFetch('meta_ads_daily_totals', 'spend,purchase_value,impressions,clicks,purchases,video_view,video_thruplay_watched_actions,outbound_ctr_weighted,impressions_for_ctr'),
+      sbFetch('meta_ads_daily_totals', 'spend,purchase_value,impressions,clicks,purchases,video_view,video_thruplay_watched_actions,outbound_ctr_weighted,impressions_for_ctr,add_to_cart'),
       sbFetch('meta_account_frequency', 'frequency,impressions'),
       sbFetch('meta_ads_insights', 'spend,ad_created_time')
     ]);
@@ -855,6 +856,8 @@ async function loadGeral() {
     set('v-pur',   pur);
     set('v-cph',   brl(cph));
 
+    const atcClk = clicks ? atc/clicks*100 : 0;
+    set('v-atc', pct2(atcClk));
     const spendPeriod = (adsRows || []).reduce((sum, r) => {
       if (!r.ad_created_time) return sum;
       const created = r.ad_created_time.split('T')[0];
